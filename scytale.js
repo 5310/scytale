@@ -58,6 +58,7 @@ ls = {
 
 atom = {
 	// Module with all the atom related functions and definitions.
+	active_atoms: {}, // Stores actively loaded and decrypted atom viewmodels.
 	definitions: { //TODO:
 	// Definitions for atom types.
 		"default": {
@@ -73,20 +74,79 @@ atom = {
 			) {
 				// Constructor for viewmodel for an atom object of same type. Is not stored, but Knockout.js'd upon!
 				// Raises exception if supplied model is not an atom object of same type.
-				if ( model.type === "default" ) {
-					throw "Model is not of same atom type as viewmodel.";
-				} else {
-					var viewmodel = {};
-					viewmodel.model = model;
-					viewmodel.key = key;
-					viewmodel.age = 0;
-					viewmodel.active = true;
-					viewmodel.type = model.type;
-					viewmodel.save = function() {
-						atom.store(this.model, this.key);
-					};
-					return viewmodel;
-				}
+				var viewmodel = {};
+				viewmodel.model = model;
+				viewmodel.key = key;
+				viewmodel.type = model.type;
+				viewmodel.views = [];
+				
+				viewmodel.saveModel = function() {
+					// Save the viewmodel's content. By which we mean the underlying model itself to the localstore.
+					atom.store(this.model, this.key);
+				};
+				viewmodel.deleteModel = function(
+					key		// An atom object key in the ls.
+				) {
+					// Delete the atom object and all viewmodels etc by the given key, or self.
+					if ( key )				 {
+						atom.active_atoms[key].deleteViewModel();
+						atom.delete(key);
+					} else {
+						atom.delete(this.key);
+						this.deleteViewModel();
+					}
+				};
+				viewmodel.createViewmodel = function(
+					key		// Key of the atom to try to create a viewmodel for.
+				) {
+					// Wraps atom.createViewModel in order to work through KO.
+					return atom.createViewModel(key);
+				};
+				viewmodel.deleteViewModel = function() {
+					// Delete all dependencies such as views, global ref, and finally itself.
+					// Delete all views if list not empty.
+					for ( var i = 0; i < this.views.length; i++ ) {
+						this.deleteView(this.views[i]);
+					}
+					// Delete reference from global list.
+					delete atom.active_atoms[this.key];
+					// Finally, delete this viewmodel itself.
+					delete this;
+				};
+				viewmodel.createView = function(
+					mode,		// A string specifying the template mode. "list", "display" and "edit" are standard ones.
+					parent		// A DOM object (or jQuery object) to append the rendered element to.
+				) {
+					// Renders a view by mode from viewmodel under a specific parent.
+					// Returns view id, and adds it to the viewmodel's list.
+					// Get parent DOM object.
+					parent = parent.jquery ? parent[0] : parent;
+					
+					// Create and append view.
+					var viewId = "atom_"+this.key+"_"+mode+"_"+Math.floor(1000+Math.random()*9000);
+					var view = "<div id='"+viewId+"'>"+atom.definitions[this.type].views[mode]+"</div>";
+					parent.append($(view));
+					
+					// Bind viewmodel to view.
+					ko.applyBindings( this, $("#"+viewId)[0] );
+					
+					// Append to list and return.
+					this.views[this.views.length] = viewId;
+					return viewId;
+				};
+				viewmodel.deleteView = function(
+					viewId	// ID of the view element.
+				) {
+					// Deletes a given viewmodel by ID.
+					// If viewmodel has no other views, delete it.
+					ko.cleanNode($("#"+viewId));
+					$("#"+viewId).remove();
+					if ( this.views.length <= 0 ) {
+						this.deleteViewmodel();
+					}
+				};
+				
+				return viewmodel;
 			},
 			views: {
 				list: "",
@@ -110,36 +170,23 @@ atom = {
 			) {
 				// Constructor for viewmodel for an atom object of same type. Is not stored, but Knockout.js'd upon!
 				// Raises exception if supplied model is not an atom object of same type.
-				if ( model.type !== "note" ) {
-					throw "Model is not of same atom type as viewmodel.";
-				} else {
-					var viewmodel = {};
-					
-					viewmodel.model = model;
-					viewmodel.key = key;
-					viewmodel.age = 0;
-					viewmodel.active = true;
-					viewmodel.type = model.type;
-					viewmodel.save = function() {
-						atom.store(this.model, this.key);
-					};
-					
-					viewmodel.title = ko.observable(model.title).extend({modelsync: [model, 'title']});
-					viewmodel.content = ko.observable(model.content).extend({modelsync: [model, 'content']});
-					
-					return viewmodel;
-				}
+				var viewmodel = atom.definitions['default'].ViewModel(model, key);
+				
+				viewmodel.title = ko.observable(model.title).extend({modelsync: [model, 'title']});
+				viewmodel.content = ko.observable(model.content).extend({modelsync: [model, 'content']});
+				
+				return viewmodel;
 			},
 			views: {
 				list: "",
 				card: "",
 				full: "\
-					<h1 data-bind='text: title'></h1>\
-					<pre data-bind='text: content'></pre>\
+					<div data-bind='text: title'></div>\
+					<div data-bind='text: content'></div>\
 				",
 				edit: "\
-					<input data-bind='text: title'></input>\
-					<textarea data-bind='text: content'></textarea>\
+					<input data-bind='value: title'></input>\
+					<textarea data-bind='value: content'></textarea>\
 				"
 			}
 		},
@@ -155,6 +202,12 @@ atom = {
 		var atomobject = atom.definitions[type].Model();
 		return atomobject;
 	}
+	},
+	delete: function(
+		key		// Key of atom object to delete.
+	) {
+		// Deletes given key from localstorage. Yes, anyone can do this regardless of being able to decrypt it.
+		ls.del(key);
 	},
 	store: function(
 		atomobject,	// Atom object to store.
@@ -204,30 +257,30 @@ atom = {
 		return atomobject;
 	}
 	},
-	render: function(
-		key,	// An ls key that contains an atom object to render. 
-		mode,	// A string specifying the template mode. "list", "display" and "edit" are standard ones.
-		parent	// A DOM object (or jQuery object) to append the rendered element to.
+	createViewModel: function(
+		key		// An ls key that contains an atom object to create viewmodel of.
 	) {
-	// Renders the atom on the given key as DOM via given mode and appends the bound view to the given parent.
-	// Returns the KO viewmodel object.
-	
-		// Get atom object and model for the KO operation.
-		var model = atom.retrieve(key);
+	// If viewmodel does not exist retrieves the atom object/model of the given key, then creates a viewmodel of it. Else returns existing.
+	// Returns the atom viewmodel object and appends it to the global list of active viewmodels if not present.
+
+		if ( atom.active_atoms[key] ) {
+			
+			return atom.active_atoms[key];
+			
+		} else {
+
+			// Get atom object and model for the KO operation.
+			var model = atom.retrieve(key);
+			
+			// Create viewmodel and bind it.
+			var viewmodel = atom.definitions[model.type].ViewModel( model, key );
+			
+			// Append and return it.
+			atom.active_atoms[key] = viewmodel;
+			return viewmodel;			
+			
+		}
 		
-		// Get parent DOM object.
-		parent = parent.jquery ? parent[0] : parent;
-		
-		// Append view.
-		var id = "atom_"+key;
-		var view = "<div id='"+id+"'>"+atom.definitions[model.type].views[mode]+"</div>";
-		parent.append($(view));
-		
-		// Create viewmodel and bind it.
-		var viewmodel = atom.definitions[model.type].ViewModel( model, key );
-		ko.applyBindings( viewmodel, document.getElementById(id) );
-		
-		return viewmodel;
 	},
 };
 
@@ -272,17 +325,18 @@ auth = {
 };
 
 window.onload = function() {
-	  
-	  
-	a = atom.store(atom.create("note"));
-	a_vm = atom.render(a, "full", $('body'));
+	 
+	a_key = atom.store(atom.create("note"));
+	var a = atom.createViewModel(a_key);
+	a.createView("edit", $('body'));
+	a.createView("full", $('body'));
 	
 	setTimeout( function() {
-		console.log(atom.retrieve(a)); 
-		a_vm.title('Another'); 
-		a_vm.save(); 
-		console.log(atom.retrieve(a))
+		console.log(atom.retrieve(a_key)); 
+		a.title('Another'); 
+		a.saveModel(); 
+		console.log(atom.retrieve(a_key)); 
+		a.deleteViewModel();
 	}, 1000 );
-	
 	
 }
