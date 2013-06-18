@@ -180,14 +180,15 @@ atom = {
 			views: {
 				list: "",
 				card: "",
-				full: "\
-					<div data-bind='text: title'></div>\
-					<div data-bind='text: content'></div>\
-				",
-				edit: "\
-					<input data-bind='value: title'></input>\
-					<textarea data-bind='value: content'></textarea>\
-				"
+				full: '\
+					<h1 class="intro"></h1>\
+				',
+				edit: '\
+					<form class="inset">\
+						<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off">\
+						<textarea type="text" name="content" placeholder="Content" class="input-text" autocomplete="off">\
+					</form>\
+				'
 			}
 		},
 	},
@@ -328,15 +329,15 @@ window.onload = function() {
 	 
 	a_key = atom.store(atom.create("note"));
 	var a = atom.createViewModel(a_key);
-	a.createView("edit", $('body'));
-	a.createView("full", $('body'));
+	//a.createView("edit", $('#target'));
+	a.createView("full", $('#target'));
 	
-	setTimeout( function() {
+	/*setTimeout( function() {
 		console.log(atom.retrieve(a_key)); 
 		a.title('Another'); 
 		a.saveModel(); 
 		console.log(atom.retrieve(a_key)); 
 		a.deleteViewModel();
-	}, 1000 );
+	}, 1000 );*/
 	
 }

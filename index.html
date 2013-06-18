@@ -5,20 +5,91 @@
 	  
     <title>Scytale</title>
     
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js"></script>
     
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.2.1/knockout-min.js"></script>
-    <script src="knockout.extender.modelsync.js"></script>
+    <script src="libraries/fries/js/action-bars.js"></script>
+    <script src="libraries/fries/js/spinners.js"></script>
+    <script src="libraries/fries/js/tabs.js"></script>
+    <link rel="stylesheet" href="libraries/fries/css/base.css">
+    <link rel="stylesheet" href="libraries/fries/css/action-bars.css">
+    <link rel="stylesheet" href="libraries/fries/css/chevrons.css">
+    <link rel="stylesheet" href="libraries/fries/css/tabs.css">
+    <link rel="stylesheet" href="libraries/fries/css/content.css">
+    <link rel="stylesheet" href="libraries/fries/css/buttons.css">
+    <link rel="stylesheet" href="libraries/fries/css/forms.css">
+    <link rel="stylesheet" href="libraries/fries/css/lists.css">
+    <link rel="stylesheet" href="libraries/fries/css/spinners.css">
+    <link rel="stylesheet" href="libraries/fries/css/icomoon.css">
+    <link rel="stylesheet" href="libraries/fries/css/stack.css">
+    <link rel="stylesheet" href="libraries/fries/css/sliders.css">
     
-    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/core-min.js"></script>
-    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha3.js"></script>
-    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"></script>
+    <script src="libraries/zepto/zepto.min.js"></script>
+    <script src="libraries/zepto/transition.min.js"></script>
+    <link rel="stylesheet" href="libraries/zepto/transition.min.css">
+    
+    <script src="libraries/knockout/knockout-min.js"></script>
+    <script src="libraries/knockout/knockout.extender.modelsync.js"></script>
+    
+    <script src="libraries/crypto/core-min.js"></script>
+    <script src="libraries/crypto/sha3.js"></script>
+    <script src="libraries/crypto/aes.js"></script>
+    
     
     <script src="scytale.js"></script>
     
   </head>
   
-  <body>    
+  <body ontouchstart="">  
+        
+    <div class="page" data-role="page" id="test1">
+
+        <header class="action-bar fixed-top">
+            
+            <a href="#" class="app-icon action up">
+                <i class="chevron"></i>
+                <!-- <i class="icon-fries"></i> -->
+            </a>
+
+            <!-- <h1 class="title">Title</h1> -->
+            <h2 class="title">Title 1 <span class="subtitle">Subtitle</span></h2>
+
+            <!-- Add action buttons here -->
+
+        </header>
+
+        <div class="content inset" id="target">
+
+            <!-- Add anything here -->
+            
+                <a transition="slide" href="#test2">Spin to local page two</a>
+
+        </div>
+    
+    </div>
+    
+    <div class="page" data-role="page" id="test2">
+
+        <header class="action-bar fixed-top">
+            
+            <a href="#" class="app-icon action up">
+                <i class="chevron"></i>
+                <!-- <i class="icon-fries"></i> -->
+            </a>
+
+            <!-- <h1 class="title">Title</h1> -->
+            <h2 class="title">Title 2 <span class="subtitle">Subtitle</span></h2>
+
+            <!-- Add action buttons here -->
+
+        </header>
+
+        <div class="content inset" id="target">
+
+            <!-- Add anything here -->
+
+        </div>
+        
+    </div>
+    
   </body>
   
 </html>
