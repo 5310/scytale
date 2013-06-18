@@ -54,6 +54,14 @@ ls = {
 		// Shorthand to clear all of localStorage. Use only for debugging now!
 		localStorage.clear();
 	},
+	ls: function() {
+		// Returns a list with all the keys in the localStorage. Because reasons.
+		var list = [];
+		for ( var key in localStorage ) {
+			list.push(key);
+		}
+		return key;
+	},
 };
 
 atom = {
