@@ -7,12 +7,14 @@ atom = {	// Module with all the atom related functions and definitions.
 	definitions: {	// Definitions for atom types.
 		
 		"default": {
+			
 			Model: function() {
 				// Constructor for a barebones atom object that serves as static model for clean storage as well.
 				return {
 					type: "default",
 				};
 			},
+			
 			ViewModel: function( 
 				model, 	// An atomobject model of the same type.
 				key 	// Unique key string of the atomobject.
@@ -25,10 +27,6 @@ atom = {	// Module with all the atom related functions and definitions.
 				viewmodel.type = model.type;
 				viewmodel.views = [];
 				
-				viewmodel.saveModel = function() {
-					// Save the viewmodel's content. By which we mean the underlying model itself to the localstore.
-					atom.store(this.model, this.key);
-				};
 				viewmodel.deleteModel = function(
 					key		// An atom object key in the ls.
 				) {
@@ -60,7 +58,8 @@ atom = {	// Module with all the atom related functions and definitions.
 				};
 				viewmodel.createView = function(
 					mode,		// A string specifying the template mode. "list", "display" and "edit" are standard ones.
-					parent		// A DOM object (or jQuery object) to append the rendered element to.
+					parent,		// A DOM object (or jQuery object) to append the rendered element to.
+					visible	// Flag for initial visibility. True by default.
 				) {
 					// Renders a view by mode from viewmodel under a specific parent.
 					// Returns view id, and adds it to the viewmodel's list.
@@ -69,8 +68,10 @@ atom = {	// Module with all the atom related functions and definitions.
 					
 					// Create and append view.
 					var viewId = "atom_"+this.key+"_"+mode+"_"+Math.floor(1000+Math.random()*9000);
-					var view = "<div id='"+viewId+"'>"+atom.definitions[this.type].views[mode]+"</div>";
+					var style = visible === undefined || visible ? "" : "display: none";
+					var view = "<div class='page' data-role='page' id='"+viewId+"' style='"+style+"' >"+atom.definitions[this.type].views[mode]+"</div>";
 					parent.append($(view));
+					$('#'+viewId).find('textarea').autoResizer();
 					
 					// Bind viewmodel to view.
 					ko.applyBindings( this, $("#"+viewId)[0] );
@@ -91,17 +92,57 @@ atom = {	// Module with all the atom related functions and definitions.
 					}
 				};
 				
+				
+				viewmodel.save = function() {
+					// Save the viewmodel's content. By which we mean the underlying model itself to the localstore.
+					atom.store(this.model, this.key);
+				};
+				viewmodel.edit = function() {
+					// Create a edit view to...edit it.
+					var id = this.createView("edit", $('body'), false);
+					$(document).transition('to', id, 'slide');
+				};
+				
 				return viewmodel;
 			},
+			
 			views: {
 				list: "",
 				card: "",
-				full: "<div data-bind='text: key'></div>",
-				edit: ""
+				full: '\
+					<header class="action-bar fixed-top">\
+						<a href="#" class="app-icon action up">\
+							<i class="chevron"></i>\
+						</a>\
+						<h1 class="title" data-bind="text:key" ></h1>\
+						<ul class="actions pull-right">\
+							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
+							<li><a href="#" class="action" title="Copy Key" data-transition="push"><i class="icon-copy"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-home"></i></a></li>\
+							<li><a href="#" class="action" title="Exit" data-transition="push"><i class="icon-exit"></i></a></li>\
+						</ul>\
+					</header>\
+					<div class="content inset">\
+						<p>This Atom cannot be read.</p>\
+					</div>\
+				',
+				edit: '\
+					<header class="action-bar fixed-top">\
+						<a href="index.html" class="action page-action" data-ignore="true" onClick="window.history.go(-1);">\
+							<i class="icon-accept"></i>\
+							<span class="action-title">Done</span>\
+						</a>\
+					</header>\
+					<div class="content inset">\
+						<p>You cannot edit this Atom since it cannot be read.</p>\
+					</div>\
+				'
 			}
+			
 		},
 
 		"note": {
+			
 			Model: function() {
 				// Constructor for a barebones atom object that serves as static model for clean storage as well.
 				return {
@@ -110,6 +151,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					content: "Some text inside the note."
 				};
 			},
+			
 			ViewModel: function( 
 				model, 	// An atomobject model of the same type.
 				key 	// Unique key string of the atomobject.
@@ -123,18 +165,44 @@ atom = {	// Module with all the atom related functions and definitions.
 				
 				return viewmodel;
 			},
+			
 			views: {
 				list: "",
 				card: "",
 				full: '\
-					<h1 class="intro"></h1>\
+					<header class="action-bar fixed-top">\
+						<a href="#" class="app-icon action up">\
+							<i class="chevron"></i>\
+						</a>\
+						<h1 class="title" data-bind="text:key" ></h1>\
+						<ul class="actions pull-right">\
+							<li><a href="#" class="action" title="Edit" data-transition="push"><i class="icon-edit" data-bind="click:edit" ></i></a></li>\
+							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Close Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
+						</ul>\
+					</header>\
+					<div class="content inset">\
+						<h1 data-bind="text:title" ></h1>\
+						<div class="preformatted" data-bind="text:content" ></div>\
+						<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
+						<textarea name="content" placeholder="Content" class="input-text" autocomplete="off" data-bind="value:content, valueUpdate: \'afterkeydown\'"> </textarea>\
+					</div>\
 				',
 				edit: '\
-					<form class="inset">\
-						<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off">\
-						<textarea type="text" name="content" placeholder="Content" class="input-text" autocomplete="off">\
-					</form>\
-				'
+					<header class="action-bar fixed-top">\
+						<a href="index.html" class="action page-action" data-ignore="true" onClick="window.history.go(-1);">\
+							<i class="icon-accept"></i>\
+							<span class="action-title">Done</span>\
+						</a>\
+					</header>\
+					<div class="content inset form-flex">\
+						<form class="inset">\
+							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
+							<textarea name="content" placeholder="Content" class="input-text" autocomplete="off" data-bind="value:content, valueUpdate: \'afterkeydown\'"> </textarea>\
+						</form>\
+					</div>\
+				',
 			}
 		},
 
