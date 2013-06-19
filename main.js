@@ -1,10 +1,16 @@
 window.onload = function() {
+	
+	trans.init();
 	 
 	a_key = atom.store(atom.create("note"));
 	a = atom.createViewModel(a_key);
-	//a.createView("edit", $('#target'));
-	a.createView("full", $('body'));
-	//a.createView("edit", $('body'));
+	//a.createView("edit");
+	a.createView("full", true);
+	//a.deleteViewModel();
+	
+	b_key = atom.store(atom.create("note"));
+	b = atom.createViewModel(b_key);
+	//b.createView("full", true);
 	
 	/*setTimeout( function() {
 		console.log(atom.retrieve(a_key)); 

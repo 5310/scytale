@@ -3,7 +3,7 @@ atom = {	// Module with all the atom related functions and definitions.
 	
 	active_atoms: {}, // Stores actively loaded and decrypted atom viewmodels.
 	
-	
+
 	definitions: {	// Definitions for atom types.
 		
 		"default": {
@@ -58,25 +58,39 @@ atom = {	// Module with all the atom related functions and definitions.
 				};
 				viewmodel.createView = function(
 					mode,		// A string specifying the template mode. "list", "display" and "edit" are standard ones.
-					parent,		// A DOM object (or jQuery object) to append the rendered element to.
-					visible	// Flag for initial visibility. True by default.
+					transition	// Object with transition properties.
 				) {
-					// Renders a view by mode from viewmodel under a specific parent.
+					// Renders a view by mode from viewmodel under a the defined global page parent.
 					// Returns view id, and adds it to the viewmodel's list.
-					// Get parent DOM object.
-					parent = parent.jquery ? parent[0] : parent;
 					
-					// Create and append view.
+					// Get parent DOM object.
+					parent = trans.parent;
+					
+					// Create the view element.
 					var viewId = "atom_"+this.key+"_"+mode+"_"+Math.floor(1000+Math.random()*9000);
-					var style = visible === undefined || visible ? "" : "display: none";
+					var style = transition ? "display: none" : "";
 					var view = "<div class='page' data-role='page' id='"+viewId+"' style='"+style+"' >"+atom.definitions[this.type].views[mode]+"</div>";
+					
+					// Append the view to the DOM.
 					parent.append($(view));
 					$('#'+viewId).find('textarea').autoResizer();
+					
+					// Settle transitions.
+					if ( typeof transition === "object" ) {
+						if ( transition[1] ) {
+							$(document).transition('to', viewId, transition[0], transition[1]);
+						} else {
+							$(document).transition('to', viewId, transition[0]);
+						}
+					} else if ( transition ) {
+						$(document).transition('to', viewId, 'slide');
+					}
 					
 					// Bind viewmodel to view.
 					ko.applyBindings( this, $("#"+viewId)[0] );
 					
 					// Append to list and return.
+					trans.stack[trans.stack.length] = [viewmodel.key, mode];
 					this.views[this.views.length] = viewId;
 					return viewId;
 				};
@@ -88,7 +102,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					ko.cleanNode($("#"+viewId));
 					$("#"+viewId).remove();
 					if ( this.views.length <= 0 ) {
-						this.deleteViewmodel();
+						this.deleteViewModel();
 					}
 				};
 				
@@ -99,8 +113,11 @@ atom = {	// Module with all the atom related functions and definitions.
 				};
 				viewmodel.edit = function() {
 					// Create a edit view to...edit it.
-					var id = this.createView("edit", $('body'), false);
-					$(document).transition('to', id, 'slide');
+					var id = this.createView("edit", ["flip"]);
+				};
+				viewmodel.back = function() {
+					// Method to go back one page.
+					trans.back();
 				};
 				
 				return viewmodel;
@@ -110,7 +127,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				list: "",
 				card: "",
 				full: '\
-					<header class="action-bar fixed-top">\
+					<header class="action-bar fixed-top" data-bind="click:back">\
 						<a href="#" class="app-icon action up">\
 							<i class="chevron"></i>\
 						</a>\
@@ -127,8 +144,8 @@ atom = {	// Module with all the atom related functions and definitions.
 					</div>\
 				',
 				edit: '\
-					<header class="action-bar fixed-top">\
-						<a href="index.html" class="action page-action" data-ignore="true" onClick="window.history.go(-1);">\
+					<header class="action-bar fixed-top" data-bind="click:back">\
+						<a href="index.html" class="action page-action" data-ignore="true">\
 							<i class="icon-accept"></i>\
 							<span class="action-title">Done</span>\
 						</a>\
@@ -171,12 +188,12 @@ atom = {	// Module with all the atom related functions and definitions.
 				card: "",
 				full: '\
 					<header class="action-bar fixed-top">\
-						<a href="#" class="app-icon action up">\
+						<a href="#" class="app-icon action up" data-bind="click:back">\
 							<i class="chevron"></i>\
 						</a>\
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
-							<li><a href="#" class="action" title="Edit" data-transition="push"><i class="icon-edit" data-bind="click:edit" ></i></a></li>\
+							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
 							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
 							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
 							<li><a href="#" class="action" title="Close Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
@@ -185,13 +202,11 @@ atom = {	// Module with all the atom related functions and definitions.
 					<div class="content inset">\
 						<h1 data-bind="text:title" ></h1>\
 						<div class="preformatted" data-bind="text:content" ></div>\
-						<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
-						<textarea name="content" placeholder="Content" class="input-text" autocomplete="off" data-bind="value:content, valueUpdate: \'afterkeydown\'"> </textarea>\
 					</div>\
 				',
 				edit: '\
 					<header class="action-bar fixed-top">\
-						<a href="index.html" class="action page-action" data-ignore="true" onClick="window.history.go(-1);">\
+						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:back" >\
 							<i class="icon-accept"></i>\
 							<span class="action-title">Done</span>\
 						</a>\
@@ -311,7 +326,6 @@ atom = {	// Module with all the atom related functions and definitions.
 			
 		}
 		
-	},
-	
+	},	
 	
 };
