@@ -75,7 +75,7 @@ ls = { 		// A shorthand wrapper for localStorage with some utilities.
 		for ( var key in localStorage ) {
 			list.push(key);
 		}
-		return key;
+		return list;
 	},
 	
 	
