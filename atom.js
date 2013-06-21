@@ -288,7 +288,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				return viewmodel;
 			},
 			
-			views: {
+			views: {	//TODO: Add message for validity status.
 				list: "",
 				card: "",
 				full: '\
@@ -305,7 +305,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						</ul>\
 					</header>\
 					<div class="content inset">\
-						<a href="#" class="link" data-transition="push" data-bind="click:go, text:title, css: { invalid: valid() == \'invalid\' }">Ahem</a>\
+						<a href="#" class="link" data-transition="push" data-bind="click:go, text:title, css: { error: valid() == \'invalid\', warning: valid() == \'validkeynew\' }">Ahem</a>\
 					</div>\
 				',
 				edit: '\
@@ -318,7 +318,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					<div class="content inset form-flex">\
 						<form class="inset">\
 							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
-							<input type="text" name="link" placeholder="Link" class="input-text" autocomplete="off" data-bind="value:link, valueUpdate: \'afterkeydown\', css: { invalid: valid() == \'invalid\' }" />\
+							<input type="text" name="link" placeholder="Link" class="input-text" autocomplete="off" data-bind="value:link, valueUpdate: \'afterkeydown\', css: { error: valid() == \'invalid\', warning: valid() == \'validkeynew\' }" />\
 						</form>\
 					</div>\
 				',

@@ -2,9 +2,13 @@
     white-space: pre;
 }
 
-.invalid {
+.error {
     color: #f44;
     border-color: #f44 !important;
+}
+.warning {
+    color: #fe6;
+    border-color: #fe6 !important;
 }
 
 .link {
