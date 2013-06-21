@@ -67,9 +67,10 @@ atom = {	// Module with all the atom related functions and definitions.
 					parent = trans.parent;
 					
 					// Create the view element.
-					var viewId = "atom_"+this.key+"_"+mode+"_"+Math.floor(1000+Math.random()*9000);
+					var viewId = "atom_key_"+this.key+"_"+mode+"_"+Math.floor(1000+Math.random()*9000);
+					var viewClass = "atom_type_"+this.type+"_"+mode;
 					var style = transition ? "display: none" : "";
-					var view = "<div class='page' data-role='page' id='"+viewId+"' style='"+style+"' >"+atom.definitions[this.type].views[mode]+"</div>";
+					var view = "<div class='page "+viewClass+"' data-role='page' id='"+viewId+"' style='"+style+"' >"+atom.definitions[this.type].views[mode]+"</div>";
 					
 					// Append the view to the DOM.
 					parent.append($(view));
@@ -127,20 +128,21 @@ atom = {	// Module with all the atom related functions and definitions.
 				list: "",
 				card: "",
 				full: '\
-					<header class="action-bar fixed-top" data-bind="click:back">\
-						<a href="#" class="app-icon action up">\
+					<header class="action-bar fixed-top">\
+						<a href="#" class="app-icon action up" data-bind="click:back">\
 							<i class="chevron"></i>\
 						</a>\
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
-							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
-							<li><a href="#" class="action" title="Copy Key" data-transition="push"><i class="icon-copy"></i></a></li>\
-							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-home"></i></a></li>\
-							<li><a href="#" class="action" title="Exit" data-transition="push"><i class="icon-exit"></i></a></li>\
+							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset">\
-						<p>This Atom cannot be read.</p>\
+						<h1>This Atom cannot be read.</h1>\
+						<p>Most likely, it was encrypted using a different passkey than the active one. You must remove the current passkey and try to access this atom again with a different one.</p>\
+						<p>Once implemented, you can try to decrypt with a different passkey just for this atom without removing the current one.</p>\
 					</div>\
 				',
 				edit: '\
@@ -196,7 +198,7 @@ atom = {	// Module with all the atom related functions and definitions.
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
 							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
 							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
-							<li><a href="#" class="action" title="Close Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
+							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset">\
@@ -215,6 +217,108 @@ atom = {	// Module with all the atom related functions and definitions.
 						<form class="inset">\
 							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
 							<textarea name="content" placeholder="Content" class="input-text" autocomplete="off" data-bind="value:content, valueUpdate: \'afterkeydown\'"> </textarea>\
+						</form>\
+					</div>\
+				',
+			}
+		},
+		
+		"link": {
+			
+			Model: function() {
+				// Constructor for a barebones atom object that serves as static model for clean storage as well.
+				return {
+					type: "link",
+					title: "A Link",
+					link: "http://ddg.gg"
+				};
+			},
+			
+			ViewModel: function( 
+				model, 	// An atomobject model of the same type.
+				key 	// Unique key string of the atomobject.
+			) {
+				// Constructor for viewmodel for an atom object of same type. Is not stored, but Knockout.js'd upon!
+				// Raises exception if supplied model is not an atom object of same type.
+				var viewmodel = atom.definitions['default'].ViewModel(model, key);
+				
+				viewmodel.title = ko.observable(model.title).extend({modelsync: [model, 'title']});
+				viewmodel.link = ko.observable(model.link).extend({modelsync: [model, 'link']});
+				
+				viewmodel.valid = function() {
+					// Returns a string that signifies the validity of the link itself.
+					
+					var link = this.link().trim();
+					
+					if ( link.indexOf('://') >= 0 ) {
+						return "validurl";
+					} else if ( link.length == ls.KEY_LENGTH && link.match(/^[a-f0-9]*$/i) !== null ) {
+						if ( ls.exists(link) ) {
+							return "validkey";
+						} else {
+						return "validkeynew";
+						}
+					} else {
+						return "invalid";
+					}
+					
+				}
+				
+				viewmodel.go = function() {
+					// Visit the link, whether it's an atom key or an url.
+					
+					var link = this.link().trim();
+					var validity = this.valid();
+					
+					console.log(validity);
+					
+					if ( validity == "validurl" ) {
+						window.open(link);
+					} else if ( validity == "validkey" ) {
+						var modelview = atom.createViewModel(link);
+						modelview.createView("full", true);
+					} else if ( validity == "validkeynew" ) {
+						//TODO: Open new atom dialog.
+					} else {
+						return;
+					}
+					
+				};
+				
+				return viewmodel;
+			},
+			
+			views: {
+				list: "",
+				card: "",
+				full: '\
+					<header class="action-bar fixed-top">\
+						<a href="#" class="app-icon action up" data-bind="click:back">\
+							<i class="chevron"></i>\
+						</a>\
+						<h1 class="title" data-bind="text:key" ></h1>\
+						<ul class="actions pull-right">\
+							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
+							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
+						</ul>\
+					</header>\
+					<div class="content inset">\
+						<a href="#" class="link" data-transition="push" data-bind="click:go, text:title, css: { invalid: valid() == \'invalid\' }">Ahem</a>\
+					</div>\
+				',
+				edit: '\
+					<header class="action-bar fixed-top">\
+						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:back" >\
+							<i class="icon-accept"></i>\
+							<span class="action-title">Done</span>\
+						</a>\
+					</header>\
+					<div class="content inset form-flex">\
+						<form class="inset">\
+							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
+							<input type="text" name="link" placeholder="Link" class="input-text" autocomplete="off" data-bind="value:link, valueUpdate: \'afterkeydown\', css: { invalid: valid() == \'invalid\' }" />\
 						</form>\
 					</div>\
 				',
@@ -293,10 +397,15 @@ atom = {	// Module with all the atom related functions and definitions.
 		// Returns generic atom if decryption failed.
 		// Throws exception if decrypted object not an atom.
 		// Returns decrypted atom.
-		var atomobject = JSON.parse(auth.decrypt(value, auth.active_passkey));
-		if ( !(atomobject.type in atom.definitions) ) {
-			throw "Object is not an atom." //TODO: Don't throw a fit, Return false so that default render can be made.
-		} else {
+		try {
+			var atomobject = JSON.parse(auth.decrypt(value, auth.active_passkey));
+			if ( !(atomobject.type in atom.definitions) ) {
+				throw "Object is not an atom." //TODO: Don't throw a fit, Return false so that default render can be made.
+			} else {
+				return atomobject;
+			}
+		} catch (e) {
+			var atomobject = atom.definitions["default"].Model();
 			return atomobject;
 		}
 	},

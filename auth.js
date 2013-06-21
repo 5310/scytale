@@ -1,7 +1,7 @@
 auth = {	// Module with all the authentication and encryption routines and states.
 	
 	
-	active_passkey: Math.random().toString()+Math.random().toString(),	// Stores the currently active passkey to encrypt and decrypt all things. Yeah, I know...
+	active_passkey: "ahem", //Math.random().toString()+Math.random().toString(),	// Stores the currently active passkey to encrypt and decrypt all things. Yeah, I know...
 	iv_string: Math.random().toString()+Math.random().toString(), 	// CONSTANT: iv value for AES. Heh...yeah...
 	
 	
@@ -39,7 +39,7 @@ auth = {	// Module with all the authentication and encryption routines and state
 		// Decrypts givens string message with passkey.
 		var passkey = passkey === undefined ? auth.hash(auth.active_passkey, "enc") : auth.hash(passkey, "enc");
 		var decrypted = CryptoJS.AES.decrypt(message, passkey).toString(CryptoJS.enc.Utf8);
-		return decrypted;		
+		return decrypted;
 	},
 	
 	

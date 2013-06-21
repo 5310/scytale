@@ -1,3 +1,16 @@
 .preformatted {
     white-space: pre;
 }
+
+.invalid {
+    color: #f44;
+    border-color: #f44 !important;
+}
+
+.link {
+    font-style: italic;
+    border-bottom: 1px dotted;
+}
+.atom_type_link_full .link {
+    font-size: 1.5em;
+}
