@@ -39,7 +39,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						this.deleteViewModel();
 					}
 				};
-				viewmodel.createViewmodel = function(
+				viewmodel.createViewModel = function(
 					key		// Key of the atom to try to create a viewmodel for.
 				) {
 					// Wraps atom.createViewModel in order to work through KO.
@@ -112,6 +112,10 @@ atom = {	// Module with all the atom related functions and definitions.
 					// Save the viewmodel's content. By which we mean the underlying model itself to the localstore.
 					atom.store(this.model, this.key);
 				};
+				viewmodel.full = function() {
+					// Create a full view to...view it fully.
+					var id = this.createView("full", true);
+				};
 				viewmodel.edit = function() {
 					// Create a edit view to...edit it.
 					var id = this.createView("edit", ["flip"]);
@@ -126,7 +130,9 @@ atom = {	// Module with all the atom related functions and definitions.
 			
 			views: {
 				list: "",
-				card: "",
+				card: '\
+					<div class="card" data-bind="text:key">Ahem.</div>\
+				',
 				full: '\
 					<header class="action-bar fixed-top">\
 						<a href="#" class="app-icon action up" data-bind="click:back">\
@@ -187,7 +193,9 @@ atom = {	// Module with all the atom related functions and definitions.
 			
 			views: {
 				list: "",
-				card: "",
+				card: '\
+					<div class="card" data-bind="text:key">Ahem.</div>\
+				',
 				full: '\
 					<header class="action-bar fixed-top">\
 						<a href="#" class="app-icon action up" data-bind="click:back">\
@@ -290,7 +298,9 @@ atom = {	// Module with all the atom related functions and definitions.
 			
 			views: {	//TODO: Add message for validity status.
 				list: "",
-				card: "",
+				card: '\
+					<div class="card" data-bind="text:key">Ahem.</div>\
+				',
 				full: '\
 					<header class="action-bar fixed-top">\
 						<a href="#" class="app-icon action up" data-bind="click:back">\
@@ -325,6 +335,184 @@ atom = {	// Module with all the atom related functions and definitions.
 			}
 		},
 
+		"folder": {
+			
+			Model: function() {
+				// Constructor for a barebones atom object that serves as static model for clean storage as well.
+				return {
+					type: "folder",
+					title: "A Folder",
+					keys: []
+				};
+			},
+			
+			ViewModel: function( 
+				model, 	// An atomobject model of the same type.
+				key 	// Unique key string of the atomobject.
+			) {
+				// Constructor for viewmodel for an atom object of same type. Is not stored, but Knockout.js'd upon!
+				// Raises exception if supplied model is not an atom object of same type.
+				var viewmodel = atom.definitions['default'].ViewModel(model, key);
+				
+				viewmodel.title = ko.observable(model.title).extend({modelsync: [model, 'title']});
+				viewmodel.keys = ko.observableArray(model.keys).extend({modelsync: [model, 'keys']});
+				
+				viewmodel.atoms = ko.observableArray();
+				
+				viewmodel.parse = function() {
+					// Update the atoms array with all the viewmodels referenced by the keys array.
+					// No need to worry about duplication or deletion, as it's taken care of elsewhere.
+					var atoms = [];
+					var keys = this.keys();
+					for ( var index in keys ) {
+						atoms.push( atom.createViewModel(keys[index]) );
+					}
+					this.atoms(atoms);
+				};
+				viewmodel.parse();
+				
+				return viewmodel;
+			},
+			
+			views: {
+				list: "",
+				card: '\
+					<div class="card" data-bind="text:key">Ahem.</div>\
+				',
+				full: '\
+					<header class="action-bar fixed-top">\
+						<a href="#" class="app-icon action up" data-bind="click:back">\
+							<i class="chevron"></i>\
+						</a>\
+						<h1 class="title" data-bind="text:key" ></h1>\
+						<ul class="actions pull-right">\
+							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
+							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
+						</ul>\
+					</header>\
+					<div class="content inset">\
+						<h1 data-bind="text:title" ></h1>\
+						<ol data-bind="foreach: atoms">\
+							<li class="card" data-bind="click: full">\
+								<!-- Atom at key <b data-bind="text: $data"></b>. -->\
+								<h1 class="key" data-bind="text: key"></h1>\
+								<div class="atom">\
+									<h2 data-bind="text: title"></h2>\
+									<div>Test content.</div>\
+								</div>\
+							</li>\
+						</ol>\
+					</div>\
+				',
+				edit: '\
+					<header class="action-bar fixed-top">\
+						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:back" >\
+							<i class="icon-accept"></i>\
+							<span class="action-title">Done</span>\
+						</a>\
+					</header>\
+					<div class="content inset form-flex">\
+						<form class="inset">\
+							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
+							<textarea name="content" placeholder="Content" class="input-text" autocomplete="off" data-bind="value:content, valueUpdate: \'afterkeydown\'"> </textarea>\
+						</form>\
+					</div>\
+				',
+			}
+		},
+		
+		"index": {
+			
+			Model: function() {
+				// Constructor for a barebones atom object that serves as static model for clean storage as well.
+				return {
+					type: "index",
+					title: "A Passkey Index",
+					keys: [],
+					all_keys: []
+				};
+			},
+			
+			ViewModel: function( 
+				model, 	// An atomobject model of the same type.
+				key 	// Unique key string of the atomobject.
+			) {
+				// Constructor for viewmodel for an atom object of same type. Is not stored, but Knockout.js'd upon!
+				// Raises exception if supplied model is not an atom object of same type.
+				var viewmodel = atom.definitions['folder'].ViewModel(model, key);
+				
+				viewmodel.all_keys = ko.observableArray(model.all_keys).extend({modelsync: [model, 'all_keys']});
+				
+				viewmodel.launchKey = function(data, event) {
+					var target;
+					if (event.target) target = event.target;
+					else if (event.srcElement) target = event.srcElement;
+					if (target.nodeType == 3) target = target.parentNode; // defeat Safari bug
+					var key = $(target).attr('data-key');
+					var viewmodel = atom.createViewModel(key);
+					viewmodel.full();
+				};
+				
+				return viewmodel;
+			},
+			
+			views: {
+				list: "",
+				card: '\
+					<div class="card" data-bind="text:key">Ahem.</div>\
+				',
+				full: '\
+					<header class="action-bar fixed-top">\
+						<a href="#" class="app-icon action up" data-bind="click:back">\
+							<i class="chevron"></i>\
+						</a>\
+						<h1 class="title" data-bind="text:key" ></h1>\
+						<ul class="actions pull-right">\
+							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
+							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
+						</ul>\
+					</header>\
+					<div class="content inset">\
+						<h1 data-bind="text:title" ></h1>\
+						<ol data-bind="foreach: atoms">\
+							<li class="card" data-bind="click: full">\
+								<!-- Atom at key <b data-bind="text: $data"></b>. -->\
+								<h1 class="key" data-bind="text: key"></h1>\
+								<div class="atom">\
+									<h2 data-bind="text: title"></h2>\
+									<div>Test content.</div>\
+								</div>\
+							</li>\
+						</ol>\
+						<ul class="list" data-bind="foreach: all_keys">\
+							<!-- ko if: $index() == 0 -->\
+								<li class="list-divider">Single Line List</li>\
+							<!-- /ko -->\
+							<li class="list-item-single-line" data-bind="text: $data, click: $parent.launchKey, attr: { \'data-key\': $data }"></li>\
+						</ul>\
+					</div>\
+				',
+				edit: '\
+					<header class="action-bar fixed-top">\
+						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:back" >\
+							<i class="icon-accept"></i>\
+							<span class="action-title">Done</span>\
+						</a>\
+					</header>\
+					<div class="content inset form-flex">\
+						<form class="inset">\
+							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
+							<textarea name="content" placeholder="Content" class="input-text" autocomplete="off" data-bind="value:content, valueUpdate: \'afterkeydown\'"> </textarea>\
+						</form>\
+					</div>\
+				',
+			}
+		},
+		
 	},
 	
 	
