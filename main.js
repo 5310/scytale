@@ -1,12 +1,14 @@
 window.onload = function() {
 	
+	atom.init();
 	trans.init();
 	 
-	//a_key = atom.store(atom.create("note"));
-	a_key = "a5fa6b36dd696487";
+	a_key = atom.store(atom.create("folder"));
+	//a_key = "64dd7cbb57dccd35";
 	a = atom.createViewModel(a_key);
-	a.keys(['a5fa6b36dd696487', 'be435b6c59e06201']); a.parse();
-	a.all_keys(['a5fa6b36dd696387', 'be435b6c59e06201', 'a5fa6b36dd696487', 'a5fa6b36dd696487', 'a5fa6b36dd696487']);
+	a.keys(["3204d789083f7785", "4b31df307b38dc27", "d7ed7ab113836a0d", "64dd7cbb57dccd35"]); a.parse();
+	//a.all_keys(['a5fa6b36dd696387', 'be435b6c59e06201', 'a5fa6b36dd696487', 'a5fa6b36dd696487', 'a5fa6b36dd696487']);
+	a.save();
 	a.createView("full", true);
 	//a.createView("edit");
 	//a.deleteViewModel();

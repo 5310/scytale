@@ -129,9 +129,10 @@ atom = {	// Module with all the atom related functions and definitions.
 			},
 			
 			views: {
-				list: "",
 				card: '\
-					<div class="card" data-bind="text:key">Ahem.</div>\
+					<li class="card" data-bind="click: full">\
+						<h1 class="key" data-bind="text: key"></h1>\
+					</li>\
 				',
 				full: '\
 					<header class="action-bar fixed-top">\
@@ -192,9 +193,14 @@ atom = {	// Module with all the atom related functions and definitions.
 			},
 			
 			views: {
-				list: "",
 				card: '\
-					<div class="card" data-bind="text:key">Ahem.</div>\
+					<li class="card" data-bind="click: full">\
+						<h1 class="key" data-bind="text: key"></h1>\
+						<div class="atom">\
+							<h2 data-bind="text: title"></h2>\
+							<div class="preformatted" data-bind="text: content"></div>\
+						</div>\
+					</li>\
 				',
 				full: '\
 					<header class="action-bar fixed-top">\
@@ -272,7 +278,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					
 				}
 				
-				viewmodel.go = function() {
+				viewmodel.go = function(data, event) {
 					// Visit the link, whether it's an atom key or an url.
 					
 					var link = this.link().trim();
@@ -291,15 +297,21 @@ atom = {	// Module with all the atom related functions and definitions.
 						return;
 					}
 					
+					event.stopPropagation();
+					
 				};
 				
 				return viewmodel;
 			},
 			
 			views: {	//TODO: Add message for validity status.
-				list: "",
 				card: '\
-					<div class="card" data-bind="text:key">Ahem.</div>\
+					<li class="card" data-bind="click: full">\
+						<h1 class="key" data-bind="text: key"></h1>\
+						<div class="atom">\
+							<h2><a href="#" class="link" data-transition="push" data-bind="click:go, text:title, css: { error: valid() == \'invalid\', warning: valid() == \'validkeynew\' }">Ahem</a></h2>\
+						</div>\
+					</li>\
 				',
 				full: '\
 					<header class="action-bar fixed-top">\
@@ -371,13 +383,21 @@ atom = {	// Module with all the atom related functions and definitions.
 				};
 				viewmodel.parse();
 				
+				viewmodel.atomTemplate = function(viewmodel) {
+					return "template_"+viewmodel.type;
+				};
+				
 				return viewmodel;
 			},
 			
 			views: {
-				list: "",
 				card: '\
-					<div class="card" data-bind="text:key">Ahem.</div>\
+					<li class="card" data-bind="click: full">\
+						<h1 class="key" data-bind="text: key"></h1>\
+						<div class="atom">\
+							<h2 class="folder" data-bind="text: title"></h2>\
+						</div>\
+					</li>\
 				',
 				full: '\
 					<header class="action-bar fixed-top">\
@@ -394,15 +414,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					</header>\
 					<div class="content inset">\
 						<h1 data-bind="text:title" ></h1>\
-						<ol data-bind="foreach: atoms">\
-							<li class="card" data-bind="click: full">\
-								<!-- Atom at key <b data-bind="text: $data"></b>. -->\
-								<h1 class="key" data-bind="text: key"></h1>\
-								<div class="atom">\
-									<h2 data-bind="text: title"></h2>\
-									<div>Test content.</div>\
-								</div>\
-							</li>\
+						<ol data-bind="template: { name: atomTemplate, foreach: atoms }" >\
 						</ol>\
 					</div>\
 				',
@@ -416,7 +428,6 @@ atom = {	// Module with all the atom related functions and definitions.
 					<div class="content inset form-flex">\
 						<form class="inset">\
 							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
-							<textarea name="content" placeholder="Content" class="input-text" autocomplete="off" data-bind="value:content, valueUpdate: \'afterkeydown\'"> </textarea>\
 						</form>\
 					</div>\
 				',
@@ -431,6 +442,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					type: "index",
 					title: "A Passkey Index",
 					keys: [],
+					index: true,
 					all_keys: []
 				};
 			},
@@ -443,6 +455,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				// Raises exception if supplied model is not an atom object of same type.
 				var viewmodel = atom.definitions['folder'].ViewModel(model, key);
 				
+				viewmodel.index = ko.observableArray(model.index).extend({modelsync: [model, 'index']});
 				viewmodel.all_keys = ko.observableArray(model.all_keys).extend({modelsync: [model, 'all_keys']});
 				
 				viewmodel.launchKey = function(data, event) {
@@ -459,10 +472,7 @@ atom = {	// Module with all the atom related functions and definitions.
 			},
 			
 			views: {
-				list: "",
-				card: '\
-					<div class="card" data-bind="text:key">Ahem.</div>\
-				',
+				card: '',
 				full: '\
 					<header class="action-bar fixed-top">\
 						<a href="#" class="app-icon action up" data-bind="click:back">\
@@ -478,43 +488,32 @@ atom = {	// Module with all the atom related functions and definitions.
 					</header>\
 					<div class="content inset">\
 						<h1 data-bind="text:title" ></h1>\
-						<ol data-bind="foreach: atoms">\
-							<li class="card" data-bind="click: full">\
-								<!-- Atom at key <b data-bind="text: $data"></b>. -->\
-								<h1 class="key" data-bind="text: key"></h1>\
-								<div class="atom">\
-									<h2 data-bind="text: title"></h2>\
-									<div>Test content.</div>\
-								</div>\
-							</li>\
+						<ol data-bind="template: { name: atomTemplate, foreach: atoms }" >\
 						</ol>\
 						<ul class="list" data-bind="foreach: all_keys">\
 							<!-- ko if: $index() == 0 -->\
-								<li class="list-divider">Single Line List</li>\
+								<li class="list-divider">All Atoms Under this PassKey</li>\
 							<!-- /ko -->\
 							<li class="list-item-single-line" data-bind="text: $data, click: $parent.launchKey, attr: { \'data-key\': $data }"></li>\
 						</ul>\
 					</div>\
 				',
-				edit: '\
-					<header class="action-bar fixed-top">\
-						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:back" >\
-							<i class="icon-accept"></i>\
-							<span class="action-title">Done</span>\
-						</a>\
-					</header>\
-					<div class="content inset form-flex">\
-						<form class="inset">\
-							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
-							<textarea name="content" placeholder="Content" class="input-text" autocomplete="off" data-bind="value:content, valueUpdate: \'afterkeydown\'"> </textarea>\
-						</form>\
-					</div>\
-				',
+				edit: '',
 			}
 		},
 		
 	},
 	
+	init: function() {
+		// Sets up things.
+		$('body').append('<div style="display: none;" id="template_container"></div>');
+		var template_container = $('#template_container');
+		for ( var type in atom.definitions ) {
+			var definition = atom.definitions[type];
+			var template = "<script type='text/html' id='template_"+type+"'>"+definition.views['card']+"</script>";
+			template_container.append($(template));
+		}
+	},
 	
 	create: function(
 		type	// A string of the atom type name.
@@ -546,12 +545,21 @@ atom = {	// Module with all the atom related functions and definitions.
 		// If key is given, tries to store to that key.
 		// Otherwise, stores to a random key.
 		// Returns key atom was stored to.
+		
+		//TODO: save to index.
+		//var index = atom.createViewModel(auth.active_passkey);
+		//if ( index.index() ) {
+			//index.all_keys.push(atomobject.key);
+		//}
+		//console.log(index);
+		
 		var value = atom.stringify(atomobject);
 		if ( key === undefined ) {
 			return ls.set(value);
 		} else {
 			return ls.set(value, key);
 		}
+		
 	},
 	
 	
