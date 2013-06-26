@@ -463,10 +463,15 @@ atom = {	// Module with all the atom related functions and definitions.
 				// Raises exception if supplied model is not an atom object of same type.
 				var viewmodel = atom.definitions['folder'].ViewModel(model, key);
 				
-				viewmodel.index = ko.observableArray(model.index).extend({modelsync: [model, 'index']});
+				viewmodel.index = ko.observable(model.index).extend({modelsync: [model, 'index']});
 				viewmodel.all_keys = ko.observableArray(model.all_keys).extend({modelsync: [model, 'all_keys']});
 				
-				viewmodel.launchKey = function(data, event) {
+				viewmodel.launchKey = function(
+					data, 	// Implicit data argument.
+					event	// Implicit event that is passed to every call.
+				) {
+					// Launches the index key.
+					// Does no validation check, mind. Shouldn't be needed.
 					var target;
 					if (event.target) target = event.target;
 					else if (event.srcElement) target = event.srcElement;
@@ -474,6 +479,31 @@ atom = {	// Module with all the atom related functions and definitions.
 					var key = $(target).attr('data-key');
 					var viewmodel = atom.createViewModel(key);
 					viewmodel.full();
+				};
+				
+				viewmodel.addIndex = function(
+					key		// Key to add.
+				) {
+					// Adds any key to the all_keys index if not already there.
+					// Does no validation check, mind. Shouldn't be needed.
+					if ( key == this.key ) return;
+					var exists = false;
+					var list = this.all_keys();
+					for ( var i in list ) {
+						if ( list[i] == key ) exists = true;	
+						console.log(list[i]);
+					}
+					if ( !exists) list.push(key);
+					this.save();
+				};
+				viewmodel.removeIndex = function(
+					key		// Key to remove.
+				) {
+					// Removes any key from the index if there at all.
+					// Does no validation check, mind. Shouldn't be needed.
+					if ( key == this.key ) return;
+					this.all_keys.remove(key);
+					this.save();
 				};
 				
 				return viewmodel;
@@ -562,11 +592,16 @@ atom = {	// Module with all the atom related functions and definitions.
 		//console.log(index);
 		
 		var value = atom.stringify(atomobject);
+		var index_key;
 		if ( key === undefined ) {
-			return ls.set(value);
+			index_key = ls.set(value);
 		} else {
-			return ls.set(value, key);
+			index_key = ls.set(value, key);
 		}
+		
+		auth.active_passkey_viewmodel.addIndex(index_key);
+		
+		return index_key;
 		
 	},
 	

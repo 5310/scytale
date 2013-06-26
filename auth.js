@@ -2,7 +2,9 @@ auth = {	// Module with all the authentication and encryption routines and state
 	
 	
 	active_passkey: "ahem", //Math.random().toString()+Math.random().toString(),	// Stores the currently active passkey to encrypt and decrypt all things. Yeah, I know...
+	active_passkey_viewmodel: undefined,
 	iv_string: Math.random().toString()+Math.random().toString(), 	// CONSTANT: iv value for AES. Heh...yeah...
+	salt: "maria",	// String to salt passkey hashes with.
 	
 	
 	hash: function(
@@ -43,10 +45,35 @@ auth = {	// Module with all the authentication and encryption routines and state
 	},
 	
 	
-	login: function(passkey) {},	//TODO:
-	
+	login: function(
+		passkey		// Passkey as string.
+	) {
+		// Logs into a given passkey.
+		// Does nothing to clear previous atoms in memory, and just another index to the stack.
+		
+		// Set active_passkey.
+		auth.active_passkey = passkey;
+
+		// Define index key.
+		var hashed_passkey = auth.hash(auth.active_passkey, auth.salt);
+		var key = hashed_passkey;
+		
+		// Create index if non-existent.
+		if ( atom.validity(key) != 'key' ) {
+			var atomobject = atom.create("index");
+			ls.set(atom.stringify(atomobject), key);
+		}
+		
+		// Render index.
+		var model = atom.parse(ls.get(key));
+		var viewmodel = atom.definitions[model.type].ViewModel(model, key);
+		auth.active_passkey_viewmodel = viewmodel;
+		viewmodel.createView("full", true);
+		
+		return viewmodel;
+		
+	},
 	
 	logout: function() {},   		//TODO:
-	
 	
 };
