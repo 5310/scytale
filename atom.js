@@ -12,6 +12,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				// Constructor for a barebones atom object that serves as static model for clean storage as well.
 				return {
 					type: "default",
+					key: undefined,
 				};
 			},
 			
@@ -21,11 +22,17 @@ atom = {	// Module with all the atom related functions and definitions.
 			) {
 				// Constructor for viewmodel for an atom object of same type. Is not stored, but Knockout.js'd upon!
 				// Raises exception if supplied model is not an atom object of same type.
+				
 				var viewmodel = {};
 				viewmodel.model = model;
-				viewmodel.key = key;
 				viewmodel.type = model.type;
+				viewmodel.key = key;
 				viewmodel.views = [];
+				
+				viewmodel.keyValidity = function() {
+					return atom.validity(this.key);
+				}
+				
 				
 				viewmodel.deleteModel = function(
 					key		// An atom object key in the ls.
@@ -110,15 +117,31 @@ atom = {	// Module with all the atom related functions and definitions.
 				
 				viewmodel.save = function() {
 					// Save the viewmodel's content. By which we mean the underlying model itself to the localstore.
-					atom.store(this.model, this.key);
+					if ( this.keyValidity() == 'key' ) {
+						atom.store(this.model, this.key);
+					} else {
+						throw "Not a valid atom to save!";
+					}
 				};
 				viewmodel.full = function() {
 					// Create a full view to...view it fully.
-					var id = this.createView("full", true);
+					if ( this.keyValidity() == 'key' ) {
+						var id = this.createView("full", true);
+					} else if ( this.keyValidity() == 'key_new' ) {
+						//TODO: Create Atom View.						
+					} else {
+						throw "Not a valid atom to fully view!";
+					}
 				};
 				viewmodel.edit = function() {
 					// Create a edit view to...edit it.
-					var id = this.createView("edit", ["flip"]);
+					if ( this.keyValidity() == 'key' ) {
+						var id = this.createView("edit", ["flip"]);
+					} else if ( this.keyValidity() == 'key_new' ) {
+						//TODO: Create Atom View.						
+					} else {
+						throw "Not a valid atom to edit!";
+					}
 				};
 				viewmodel.back = function() {
 					// Method to go back one page.
@@ -130,7 +153,7 @@ atom = {	// Module with all the atom related functions and definitions.
 			
 			views: {
 				card: '\
-					<li class="card" data-bind="click: full">\
+					<li class="card" data-bind="click: full, css: { error: keyValidity() == \'invalid\', warning: keyValidity() == \'key_new\' }">\
 						<h1 class="key" data-bind="text: key"></h1>\
 					</li>\
 				',
@@ -259,39 +282,24 @@ atom = {	// Module with all the atom related functions and definitions.
 				viewmodel.title = ko.observable(model.title).extend({modelsync: [model, 'title']});
 				viewmodel.link = ko.observable(model.link).extend({modelsync: [model, 'link']});
 				
-				viewmodel.valid = function() {
+				viewmodel.linkValidity = function() {
 					// Returns a string that signifies the validity of the link itself.
-					
 					var link = this.link().trim();
-					
-					if ( link.indexOf('://') >= 0 ) {
-						return "validurl";
-					} else if ( link.length == ls.KEY_LENGTH && link.match(/^[a-f0-9]*$/i) !== null ) {
-						if ( ls.exists(link) ) {
-							return "validkey";
-						} else {
-						return "validkeynew";
-						}
-					} else {
-						return "invalid";
-					}
-					
+					return atom.validity(link);
 				}
 				
 				viewmodel.go = function(data, event) {
 					// Visit the link, whether it's an atom key or an url.
 					
 					var link = this.link().trim();
-					var validity = this.valid();
+					var link_validity = this.valid();
 					
-					console.log(validity);
-					
-					if ( validity == "validurl" ) {
+					if ( link_validity == "url" ) {
 						window.open(link);
-					} else if ( validity == "validkey" ) {
+					} else if ( link_validity == "key" ) {
 						var modelview = atom.createViewModel(link);
 						modelview.createView("full", true);
-					} else if ( validity == "validkeynew" ) {
+					} else if ( link_validity == "key_new" ) {
 						//TODO: Open new atom dialog.
 					} else {
 						return;
@@ -327,7 +335,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						</ul>\
 					</header>\
 					<div class="content inset">\
-						<a href="#" class="link" data-transition="push" data-bind="click:go, text:title, css: { error: valid() == \'invalid\', warning: valid() == \'validkeynew\' }">Ahem</a>\
+						<a href="#" class="link" data-transition="push" data-bind="click:go, text:title, css: { error: linkValidity() == \'invalid\', warning: linkValidity() == \'key_new\' }">Ahem</a>\
 					</div>\
 				',
 				edit: '\
@@ -575,14 +583,16 @@ atom = {	// Module with all the atom related functions and definitions.
 			key		// A string (or string-assumed) localStorage key to try to retrieve and parse atom from.
 		) {
 		// Tries to retrieve and parse atom from given key.
-		// Raises exception given key is non existent.
-		// Returns retrieved parsed atom.
-		var value = ls.get(key);
-		if ( value === null ) {
-			throw "Key does not exist."
-		} else {
+		// Returns retrieved parsed atom, or default atom with validity property set.
+		
+		var validity = atom.validity(key);
+		
+		if ( validity === 'key' ) {
 			return atom.parse(value);
+		} else {
+			return atom.create('default');
 		}
+		
 	},
 	
 	
@@ -593,19 +603,30 @@ atom = {	// Module with all the atom related functions and definitions.
 		// Returns generic atom if decryption failed.
 		// Throws exception if decrypted object not an atom.
 		// Returns decrypted atom.
-		try {
-			var atomobject = JSON.parse(auth.decrypt(value, auth.active_passkey));
-			if ( !(atomobject.type in atom.definitions) ) {
-				throw "Object is not an atom." //TODO: Don't throw a fit, Return false so that default render can be made.
-			} else {
-				return atomobject;
-			}
-		} catch (e) {
-			var atomobject = atom.definitions["default"].Model();
+		var atomobject = JSON.parse(auth.decrypt(value, auth.active_passkey));
+		if ( !(atomobject.type in atom.definitions) ) {
+			throw "Object is not an atom." //TODO: Don't throw a fit, Return false so that default render can be made.
+		} else {
 			return atomobject;
 		}
 	},
 	
+	validity: function(
+		key	// Key to check validity of.
+	) {
+		// Returns key validity by certain classes.
+		if ( key.indexOf('://') >= 0 ) {
+			return 'url';
+		} else if ( key.length == ls.KEY_LENGTH && key.match(/^[a-f0-9]*$/i) !== null ) {
+			if ( ls.exists(key) ) {
+				return 'key';
+			} else {
+				return 'key_new';
+			}
+		} else {
+			return 'invalid';
+		}	
+	},
 	
 	createViewModel: function(
 		key		// An ls key that contains an atom object to create viewmodel of.
