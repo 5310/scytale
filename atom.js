@@ -153,7 +153,7 @@ atom = {	// Module with all the atom related functions and definitions.
 			
 			views: {
 				card: '\
-					<li class="card" data-bind="click: full, css: { error: keyValidity() == \'invalid\', warning: keyValidity() == \'key_new\' }">\
+					<li class="card" data-bind="click: full, css: { error: keyValidity() == \'invalid\', warning: keyValidity() == \'key_new\', locked: keyValidity() == \'key_invalid\' }">\
 						<h1 class="key" data-bind="text: key"></h1>\
 					</li>\
 				',
@@ -292,7 +292,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					// Visit the link, whether it's an atom key or an url.
 					
 					var link = this.link().trim();
-					var link_validity = this.valid();
+					var link_validity = this.linkValidity();
 					
 					if ( link_validity == "url" ) {
 						window.open(link);
@@ -317,7 +317,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					<li class="card" data-bind="click: full">\
 						<h1 class="key" data-bind="text: key"></h1>\
 						<div class="atom">\
-							<h2><a href="#" class="link" data-transition="push" data-bind="click:go, text:title, css: { error: valid() == \'invalid\', warning: valid() == \'validkeynew\' }">Ahem</a></h2>\
+							<h2><a href="#" class="link" data-transition="push" data-bind="click:go, text:title, css: { error: linkValidity() == \'invalid\', warning: linkValidity() == \'validkeynew\' }">Ahem</a></h2>\
 						</div>\
 					</li>\
 				',
@@ -348,7 +348,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					<div class="content inset form-flex">\
 						<form class="inset">\
 							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
-							<input type="text" name="link" placeholder="Link" class="input-text" autocomplete="off" data-bind="value:link, valueUpdate: \'afterkeydown\', css: { error: valid() == \'invalid\', warning: valid() == \'validkeynew\' }" />\
+							<input type="text" name="link" placeholder="Link" class="input-text" autocomplete="off" data-bind="value:link, valueUpdate: \'afterkeydown\', css: { error: linkValidity() == \'invalid\', warning: linkValidity() == \'validkeynew\' }" />\
 						</form>\
 					</div>\
 				',
@@ -588,6 +588,7 @@ atom = {	// Module with all the atom related functions and definitions.
 		var validity = atom.validity(key);
 		
 		if ( validity === 'key' ) {
+			var value = ls.get(key);
 			return atom.parse(value);
 		} else {
 			return atom.create('default');
@@ -605,7 +606,7 @@ atom = {	// Module with all the atom related functions and definitions.
 		// Returns decrypted atom.
 		var atomobject = JSON.parse(auth.decrypt(value, auth.active_passkey));
 		if ( !(atomobject.type in atom.definitions) ) {
-			throw "Object is not an atom." //TODO: Don't throw a fit, Return false so that default render can be made.
+			throw "Object is not an atom."; //TODO: Don't throw a fit, Return false so that default render can be made.
 		} else {
 			return atomobject;
 		}
@@ -619,7 +620,13 @@ atom = {	// Module with all the atom related functions and definitions.
 			return 'url';
 		} else if ( key.length == ls.KEY_LENGTH && key.match(/^[a-f0-9]*$/i) !== null ) {
 			if ( ls.exists(key) ) {
-				return 'key';
+				try {
+					var value = ls.get(key);
+					var atomobject = atom.parse(value);
+					return 'key';
+				} catch (e) {
+					return 'key_invalid';
+				}
 			} else {
 				return 'key_new';
 			}

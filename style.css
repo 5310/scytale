@@ -6,12 +6,16 @@ ul, ol {
     white-space: pre;
 }
 
-.error {
-    color: #f44;
+.error, .error * {
+    color: #f44 !important; 
+}
+input.error {
     border-color: #f44 !important;
 }
-.warning {
-    color: #fe6;
+.warning, .warning * {
+    color: #fe6 !important; 
+}
+input.warning {
     border-color: #fe6 !important;
 }
 
@@ -23,14 +27,6 @@ ul, ol {
     font-size: 1.5em;
 }
 
-.card .folder {
-    font-style: italic;
-}
-.card .folder:after {
-    content: " /";
-    opacity: 0.5;
-}
-
 .card {
     border-bottom: 2px solid #1f1f1f;
     background-color: #222;
@@ -40,13 +36,22 @@ ul, ol {
     border-radius: 1px;
     font-size: 13px;
 }
+.card.warning {
+    background:url(
+        data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAUUlEQVQYV2MUFBT8zwAFQDaMiUK/f/+egRGmEJ8ikC6wQkKKwAqVlJTgViPbB7IOGWBViK4IZCOGQmyKMKzGpQhFIT5FcIWEFMGDB9l3uIIKALEkKDFqsUI7AAAAAElFTkSuQmCC
+    ) repeat;
+    box-shadow:inset 0 0 40px #222;
+}
+
+.card:active {
+    background-color: rgba(51, 181, 229, 0.5);
+}
 .card .key {
     font-size: 12px;
     margin-top: 4px;
     font-weight: normal;
-    opacity: 0.5;
+    color: #777;
 }
-
 .card .atom {
     margin: 6px 0;
 }
@@ -56,6 +61,10 @@ ul, ol {
     font-weight: normal;
 }
 
-.card:active {
-    background-color: rgba(51, 181, 229, 0.5);
+.card .folder {
+    font-style: italic;
+}
+.card .folder:after {
+    content: " /";
+    opacity: 0.5;
 }
