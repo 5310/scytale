@@ -36,7 +36,7 @@ input.warning {
     border-radius: 1px;
     font-size: 13px;
 }
-.card.warning {
+.card.locked {
     background:url(
         data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAUUlEQVQYV2MUFBT8zwAFQDaMiUK/f/+egRGmEJ8ikC6wQkKKwAqVlJTgViPbB7IOGWBViK4IZCOGQmyKMKzGpQhFIT5FcIWEFMGDB9l3uIIKALEkKDFqsUI7AAAAAElFTkSuQmCC
     ) repeat;
