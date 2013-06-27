@@ -72,7 +72,7 @@ input.warning {
 .modal_frame {
     position: absolute;
     left: 0; right: 0; top: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.75);
 }
 .modal_container {
     position: absolute;
@@ -80,9 +80,9 @@ input.warning {
 }
 .modal_window {
     width: 300px;
-    margin-left: -50%; margin-top: -50%;
+    margin-left: -50%;
     background: #222;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    box-shadow: 0 1px 5px rgba(0,0,0,0.75);
 }
 .modal_header{
     width: 100%;
@@ -96,13 +96,9 @@ input.warning {
     width: 100%;
     padding: 16px;
     box-sizing: border-box;
-    margin-bottom: 48px;
 }
 .modal_buttons {
     width: 100%; height: 48px;
-    position: absolute;
-    bottom: 0px;
-    background: inherit;
 }
 .modal_button {
     width: 50%; height: 48px;
