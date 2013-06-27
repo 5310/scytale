@@ -34,17 +34,10 @@ atom = {	// Module with all the atom related functions and definitions.
 				}
 				
 				
-				viewmodel.deleteModel = function(
-					key		// An atom object key in the ls.
-				) {
+				viewmodel.deleteModel = function() {
 					// Delete the atom object and all viewmodels etc by the given key, or self.
-					if ( key )				 {
-						atom.active_atoms[key].deleteViewModel();
-						atom.delete(key);
-					} else {
-						atom.delete(this.key);
-						this.deleteViewModel();
-					}
+					atom.delete(this.key);
+					this.deleteViewModel();
 				};
 				viewmodel.createViewModel = function(
 					key		// Key of the atom to try to create a viewmodel for.
@@ -123,6 +116,11 @@ atom = {	// Module with all the atom related functions and definitions.
 						throw "Not a valid atom to save!";
 					}
 				};
+				viewmodel.remove = function() {
+					// Delete atom.
+					this.deleteModel();
+					trans.back();
+				};
 				viewmodel.full = function() {
 					// Create a full view to...view it fully.
 					if ( this.keyValidity() == 'key' ) {
@@ -147,6 +145,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					// Method to go back one page.
 					trans.back();
 				};
+				viewmodel.copy = function() {} //TODO:
 				
 				return viewmodel;
 			},
@@ -164,15 +163,16 @@ atom = {	// Module with all the atom related functions and definitions.
 						</a>\
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
-							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
+							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-bind="click:copy" data-transition="push"><i class="icon-copy"></i></a></li> -->\
 							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
 							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset">\
 						<h1>This Atom cannot be read.</h1>\
-						<p>Most likely, it was encrypted using a different passkey than the active one. You must remove the current passkey and try to access this atom again with a different one.</p>\
-						<p>Once implemented, you can try to decrypt with a different passkey just for this atom without removing the current one.</p>\
+						<p>Most likely it was deleted.</p>\
+						<p>Or maybe it never existed, or is corrupted or something.</p>\
+						<p>Or it could be that it was encrypted using a different passkey than the active one. You can log in under a different passkey and try again.</p>\
 					</div>\
 				',
 				edit: '\
@@ -233,7 +233,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
-							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
+							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
 							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
 							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
 						</ul>\
@@ -249,6 +249,9 @@ atom = {	// Module with all the atom related functions and definitions.
 							<i class="icon-accept"></i>\
 							<span class="action-title">Done</span>\
 						</a>\
+						<ul class="actions pull-right">\
+							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-remove"></i></a></li>\
+						</ul>\
 					</header>\
 					<div class="content inset form-flex">\
 						<form class="inset">\
@@ -329,7 +332,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
-							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
+							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
 							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
 							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
 						</ul>\
@@ -344,6 +347,9 @@ atom = {	// Module with all the atom related functions and definitions.
 							<i class="icon-accept"></i>\
 							<span class="action-title">Done</span>\
 						</a>\
+						<ul class="actions pull-right">\
+							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-remove"></i></a></li>\
+						</ul>\
 					</header>\
 					<div class="content inset form-flex">\
 						<form class="inset">\
@@ -415,14 +421,14 @@ atom = {	// Module with all the atom related functions and definitions.
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
-							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
+							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
 							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
 							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset">\
 						<h1 data-bind="text:title" ></h1>\
-						<ol data-bind="template: { name: atomTemplate, foreach: atoms }" >\
+						<ol data-bind="template: { name: atomTemplate, foreach: atoms}" >\
 						</ol>\
 					</div>\
 				',
@@ -432,6 +438,9 @@ atom = {	// Module with all the atom related functions and definitions.
 							<i class="icon-accept"></i>\
 							<span class="action-title">Done</span>\
 						</a>\
+						<ul class="actions pull-right">\
+							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-remove"></i></a></li>\
+						</ul>\
 					</header>\
 					<div class="content inset form-flex">\
 						<form class="inset">\
@@ -490,8 +499,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					var exists = false;
 					var list = this.all_keys();
 					for ( var i in list ) {
-						if ( list[i] == key ) exists = true;	
-						console.log(list[i]);
+						if ( list[i] == key ) exists = true;
 					}
 					if ( !exists) list.push(key);
 					this.save();
@@ -519,7 +527,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
-							<li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li>\
+							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
 							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
 							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
 						</ul>\
@@ -570,6 +578,8 @@ atom = {	// Module with all the atom related functions and definitions.
 	delete: function(
 		key		// Key of atom object to delete.
 	) {
+		// Removes key from index.
+		auth.active_passkey_viewmodel.removeIndex(key);
 		// Deletes given key from localstorage. Yes, anyone can do this regardless of being able to decrypt it.
 		ls.del(key);
 	},

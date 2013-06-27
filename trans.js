@@ -39,6 +39,16 @@ trans = {
 		}		
 	},
 	
+	deletePreviousKey: function(
+		key		// Element to compare against.
+	) {
+		for ( var i = 0; i < trans.stack.length-1; i++ ) {
+			if ( trans.stack[i][0] == key ) {
+				trans.stack = trans.stack.splice(i, 1);
+			}
+		}
+	},
+	
 	deletePage: function(event, element) {
 		//TODO: Delete the page when returning from it and it's viewmodel if any.
 		var viewmodel = ko.dataFor(element);
