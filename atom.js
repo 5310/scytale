@@ -425,6 +425,15 @@ atom = {	// Module with all the atom related functions and definitions.
 					return "template_"+viewmodel.type;
 				};
 				
+				// Extend view creation to trigger parsing only for the full view, so that infinite loops don't occur for folders containing itself as a card.
+				viewmodel._createView = viewmodel.createView;
+				viewmodel.createView = function( mode, transition ) {
+					if ( mode == "full" ) {
+						this.parse();
+					}
+					return viewmodel._createView( mode, transition );
+				}
+				
 				return viewmodel;
 			},
 			
