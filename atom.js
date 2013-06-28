@@ -424,11 +424,26 @@ atom = {	// Module with all the atom related functions and definitions.
 					console.log(123);
 					var keys = [];
 					for ( var i = 0; i < this.keysObservable().length; i++ ) {
-						keys.push(this.keysObservable()[i]());
+						var key = this.keysObservable()[i]();
+						if ( key.trim() ) keys.push(key);
 					}
 					this.keys(keys);
 					this.parse();
 					this.save();
+				};
+				
+				viewmodel.addKey = function( data, event ) {
+					
+					var target;
+					if (event.target) target = event.target;
+					else if (event.srcElement) target = event.srcElement;
+					if (target.nodeType == 3) target = target.parentNode; // defeat Safari bug
+					
+					this.keys.push("");
+					this.parse();
+					
+					console.log($(target).parent().find(".folder-content-key").last().focus());
+					
 				};
 				
 				viewmodel.keysValidity = function( data ) {
@@ -498,8 +513,9 @@ atom = {	// Module with all the atom related functions and definitions.
 							<!-- ko if: $index() == 0 -->\
 								<li class="list-divider">Folder Content</li>\
 							<!-- /ko -->\
-							<input type="text" name="key" placeholder="Key" class="input-text" autocomplete="off" data-bind="value: $parent.keysObservable()[$index()], attr: { \'data-index\': $index } " />\
+							<input type="text" name="key" placeholder="Key" class="input-text folder-content-key" autocomplete="off" data-bind="value: $parent.keysObservable()[$index()], attr: { \'data-index\': $index } " />\
 						</ul>\
+						<button type="button" class="btn btn-block" data-bind="click: addKey">+</button>\
 						</form>\
 					</div>\
 				',
