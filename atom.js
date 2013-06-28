@@ -383,19 +383,43 @@ atom = {	// Module with all the atom related functions and definitions.
 				viewmodel.title = ko.observable(model.title).extend({modelsync: [model, 'title']});
 				viewmodel.keys = ko.observableArray(model.keys).extend({modelsync: [model, 'keys']});
 				
+				viewmodel.keysObservable = ko.observableArray();
 				viewmodel.atoms = ko.observableArray();
 				
 				viewmodel.parse = function() {
 					// Update the atoms array with all the viewmodels referenced by the keys array.
 					// No need to worry about duplication or deletion, as it's taken care of elsewhere.
+					var keysObservable = [];
 					var atoms = [];
 					var keys = this.keys();
+					var self = this;
 					for ( var index in keys ) {
+						var observable = ko.observable(keys[index]);
+						observable.subscribe(function(newValue) {
+						   self.record();
+						});
+						keysObservable.push( observable );
 						atoms.push( atom.createViewModel(keys[index]) );
 					}
+					this.keysObservable(keysObservable);
 					this.atoms(atoms);
 				};
-				viewmodel.parse();
+				//viewmodel.parse();
+				
+				viewmodel.record = function() {
+					console.log(123);
+					var keys = [];
+					for ( var i = 0; i < this.keysObservable().length; i++ ) {
+						keys.push(this.keysObservable()[i]());
+					}
+					this.keys(keys);
+					this.parse();
+					this.save();
+				};
+				
+				viewmodel.keysValidity = function( data ) {
+					return atom.validity(data);
+				}
 				
 				viewmodel.atomTemplate = function(viewmodel) {
 					return "template_"+viewmodel.type;
@@ -444,7 +468,14 @@ atom = {	// Module with all the atom related functions and definitions.
 					</header>\
 					<div class="content inset form-flex">\
 						<form class="inset">\
+							<label class="list-divider">Folder Name</label>\
 							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
+							<ul class="list" data-bind="foreach: keysObservable">\
+							<!-- ko if: $index() == 0 -->\
+								<li class="list-divider">Folder Content</li>\
+							<!-- /ko -->\
+							<input type="text" name="key" placeholder="Key" class="input-text" autocomplete="off" data-bind="value: $parent.keysObservable()[$index()], attr: { \'data-index\': $index } " />\
+						</ul>\
 						</form>\
 					</div>\
 				',
