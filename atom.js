@@ -383,6 +383,20 @@ atom = {	// Module with all the atom related functions and definitions.
 				viewmodel.title = ko.observable(model.title).extend({modelsync: [model, 'title']});
 				viewmodel.keys = ko.observableArray(model.keys).extend({modelsync: [model, 'keys']});
 				
+				viewmodel.length = function() {
+					return this.keys().length;
+				};
+				viewmodel.lengthText = function() {
+					var length = this.length(0);
+					if ( length == 0 ) {
+						return "Empty.";
+					} else if ( length == 1 ) {
+						return "Contains "+length+" atom.";
+					} else {
+						return "Contains "+length+" atoms.";
+					}
+				};
+				
 				viewmodel.keysObservable = ko.observableArray();
 				viewmodel.atoms = ko.observableArray();
 				
@@ -443,6 +457,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						<h1 class="key" data-bind="text: key"></h1>\
 						<div class="atom">\
 							<h2 class="folder" data-bind="text: title"></h2>\
+							<div data-bind="text: lengthText()"></div>\
 						</div>\
 					</li>\
 				',
