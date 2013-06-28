@@ -145,7 +145,15 @@ atom = {	// Module with all the atom related functions and definitions.
 					// Method to go back one page.
 					trans.back();
 				};
+				viewmodel.root = function() {
+					// Method to go root page, which is usually an index, and no need to check.
+					trans.root();
+				};
 				viewmodel.copy = function() {} //TODO:
+				viewmodel.logout = function() {
+					// Logs out to the main screen. Relies on auth.logout for the real deal.
+					auth.logout();
+				};
 				
 				return viewmodel;
 			},
@@ -164,8 +172,8 @@ atom = {	// Module with all the atom related functions and definitions.
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
 							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-bind="click:copy" data-transition="push"><i class="icon-copy"></i></a></li> -->\
-							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
-							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Remove Passkey" data-transition="push" data-bind="click: logout"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset">\
@@ -234,8 +242,8 @@ atom = {	// Module with all the atom related functions and definitions.
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
 							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
-							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
-							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Remove Passkey" data-transition="push" data-bind="click: logout"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset">\
@@ -333,8 +341,8 @@ atom = {	// Module with all the atom related functions and definitions.
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
 							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
-							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
-							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Remove Passkey" data-transition="push" data-bind="click: logout"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset">\
@@ -485,8 +493,8 @@ atom = {	// Module with all the atom related functions and definitions.
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
 							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
-							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
-							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Remove Passkey" data-transition="push" data-bind="click: logout"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset">\
@@ -599,8 +607,8 @@ atom = {	// Module with all the atom related functions and definitions.
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
 							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
-							<li><a href="#" class="action" title="Return to Root" data-transition="push"><i class="icon-folder"></i></a></li>\
-							<li><a href="#" class="action" title="Remove Passkey" data-transition="push"><i class="icon-key"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Remove Passkey" data-transition="push" data-bind="click: logout"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset">\
@@ -615,7 +623,30 @@ atom = {	// Module with all the atom related functions and definitions.
 						</ul>\
 					</div>\
 				',
-				edit: '',
+				edit: '\
+					<header class="action-bar fixed-top">\
+						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:back" >\
+							<i class="icon-accept"></i>\
+							<span class="action-title">Done</span>\
+						</a>\
+						<ul class="actions pull-right">\
+							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-remove"></i></a></li>\
+						</ul>\
+					</header>\
+					<div class="content inset form-flex">\
+						<form class="inset">\
+							<label class="list-divider">Folder Name</label>\
+							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
+							<ul class="list" data-bind="foreach: keysObservable">\
+							<!-- ko if: $index() == 0 -->\
+								<li class="list-divider">Folder Content</li>\
+							<!-- /ko -->\
+							<input type="text" name="key" placeholder="Key" class="input-text folder-content-key" autocomplete="off" data-bind="value: $parent.keysObservable()[$index()], attr: { \'data-index\': $index } " />\
+						</ul>\
+						<button type="button" class="btn btn-block" data-bind="click: addKey">+</button>\
+						</form>\
+					</div>\
+				',
 			}
 		},
 		

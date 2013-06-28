@@ -39,6 +39,17 @@ trans = {
 		}		
 	},
 	
+	root: function() {
+		if ( trans.stack.length > 1 ) {
+			var root = trans.stack[0];
+			trans.stack = [];
+			var key = root[0];
+			var mode = root[1];
+			var viewmodel = atom.createViewModel(key);
+			viewmodel.createView(mode, ['slide', "reverse"]);
+		}	
+	},
+	
 	deletePreviousKey: function(
 		key		// Element to compare against.
 	) {
