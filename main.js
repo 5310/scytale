@@ -29,4 +29,6 @@ window.onload = function() {
 		//a.deleteViewModel();
 	}, 1000 );*/
 	
+	//modal.create($('body'), "newatom", {key: "9ab26bc6a4eb81b3"});
+	
 }

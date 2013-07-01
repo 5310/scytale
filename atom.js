@@ -126,7 +126,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					if ( this.keyValidity() == 'key' ) {
 						var id = this.createView("full", true);
 					} else if ( this.keyValidity() == 'key_new' ) {
-						//TODO: Create Atom View.						
+						atom.createNewAtom(key);						
 					} else {
 						throw "Not a valid atom to fully view!";
 					}
@@ -136,7 +136,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					if ( this.keyValidity() == 'key' ) {
 						var id = this.createView("edit", ["flip"]);
 					} else if ( this.keyValidity() == 'key_new' ) {
-						//TODO: Create Atom View.						
+						atom.createNewAtom(key);
 					} else {
 						throw "Not a valid atom to edit!";
 					}
@@ -429,7 +429,6 @@ atom = {	// Module with all the atom related functions and definitions.
 				//viewmodel.parse();
 				
 				viewmodel.record = function() {
-					console.log(123);
 					var keys = [];
 					for ( var i = 0; i < this.keysObservable().length; i++ ) {
 						var key = this.keysObservable()[i]();
@@ -447,10 +446,11 @@ atom = {	// Module with all the atom related functions and definitions.
 					else if (event.srcElement) target = event.srcElement;
 					if (target.nodeType == 3) target = target.parentNode; // defeat Safari bug
 					
-					this.keys.push("");
-					this.parse();
+					var key = ls.randomkey();
 					
-					console.log($(target).parent().find(".folder-content-key").last().focus());
+					this.keys.push(key);
+					this.parse();
+					this.record();
 					
 				};
 				
@@ -669,7 +669,7 @@ atom = {	// Module with all the atom related functions and definitions.
 		// Creates and returns a blank atom of given type.
 		// If given type does not exist, raises exception.
 		if ( atom.definitions[type] === undefined ) {
-			throw "Atom of type "+type+"is not defined.";
+			throw "Atom of type "+type+" is not defined.";
 		} else {
 			var atomobject = atom.definitions[type].Model();
 			return atomobject;
@@ -734,6 +734,8 @@ atom = {	// Module with all the atom related functions and definitions.
 		
 		var validity = atom.validity(key);
 		
+		//console.log(key);
+		
 		if ( validity === 'key' ) {
 			var value = ls.get(key);
 			return atom.parse(value);
@@ -783,12 +785,13 @@ atom = {	// Module with all the atom related functions and definitions.
 	},
 	
 	createViewModel: function(
-		key		// An ls key that contains an atom object to create viewmodel of.
+		key,	// An ls key that contains an atom object to create viewmodel of.
+		force	//
 	) {
 	// If viewmodel does not exist retrieves the atom object/model of the given key, then creates a viewmodel of it. Else returns existing.
 	// Returns the atom viewmodel object and appends it to the global list of active viewmodels if not present.
 
-		if ( atom.active_atoms[key] ) {
+		if ( atom.active_atoms[key] && !force ) {
 			
 			return atom.active_atoms[key];
 			
@@ -807,5 +810,9 @@ atom = {	// Module with all the atom related functions and definitions.
 		}
 		
 	},	
+	
+	createNewAtom: function(key) {
+		return modal.create($('body'), "newatom", {'key': key, blacklist: ['default', 'index']});
+	}
 	
 };

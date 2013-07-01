@@ -94,19 +94,29 @@ input.warning {
 }
 .modal_content {
     width: 100%;
-    padding: 16px;
     box-sizing: border-box;
+}
+.modal_content.padded {
+    padding: 16px;
 }
 .modal_buttons {
     width: 100%; height: 48px;
 }
 .modal_button {
-    width: 50%; height: 48px;
-    float: left;
+    width: 100%; height: 48px;
     text-align: center;
     padding: 10px;
     border-top: 1px solid #333;
     box-sizing: border-box;
+    cursor: pointer;
+}
+.modal_button.half {
+    width: 50%; 
+    float: left;
+}
+.modal_button.short {
+    height: 36px; 
+    padding: 4px;
 }
 .modal_button:not(:last-child) {
     border-right: 1px solid #333;
