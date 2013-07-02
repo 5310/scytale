@@ -2,8 +2,9 @@ window.onload = function() {
 	
 	atom.init();
 	trans.init();
+	auth.init();
 	
-	i = auth.login("ahem");
+	//i = auth.login("ahem");
 	//i = atom.createViewModel(auth.hashIndex());
 	//i.keys(['a5fa6b36dd696387', 'be435b6c59e06201', 'a5fa6b36dd696487', 'a5fa6b36dd692487', 'a5fa6b36dd696487']);
 	 

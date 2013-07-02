@@ -145,6 +145,18 @@ atom = {	// Module with all the atom related functions and definitions.
 					// Method to go back one page.
 					trans.back();
 				};
+				viewmodel.saveback = function() {
+					// Method to go back one page.
+					this.save();
+					trans.back();
+				};
+				viewmodel.showback = function() {
+					if ( trans.stack.length > 0 ) {
+						return true;
+					} else {
+						return false;
+					}
+				};
 				viewmodel.root = function() {
 					// Method to go root page, which is usually an index, and no need to check.
 					trans.root();
@@ -167,7 +179,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				full: '\
 					<header class="action-bar fixed-top">\
 						<a href="#" class="app-icon action up" data-bind="click:back">\
-							<i class="chevron"></i>\
+							<i class="chevron" data-bind="css: { hide: !showback() }"></i>\
 						</a>\
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
@@ -184,7 +196,7 @@ atom = {	// Module with all the atom related functions and definitions.
 					</div>\
 				',
 				edit: '\
-					<header class="action-bar fixed-top" data-bind="click:back">\
+					<header class="action-bar fixed-top" data-bind="click:saveback">\
 						<a href="index.html" class="action page-action" data-ignore="true">\
 							<i class="icon-accept"></i>\
 							<span class="action-title">Done</span>\
@@ -236,7 +248,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				full: '\
 					<header class="action-bar fixed-top">\
 						<a href="#" class="app-icon action up" data-bind="click:back">\
-							<i class="chevron"></i>\
+							<i class="chevron" data-bind="css: { hide: !showback() }"></i>\
 						</a>\
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
@@ -253,7 +265,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				',
 				edit: '\
 					<header class="action-bar fixed-top">\
-						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:back" >\
+						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:saveback" >\
 							<i class="icon-accept"></i>\
 							<span class="action-title">Done</span>\
 						</a>\
@@ -262,7 +274,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						</ul>\
 					</header>\
 					<div class="content inset form-flex">\
-						<form class="inset">\
+						<form class="inset" data-bind="submit: saveback">\
 							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
 							<textarea name="content" placeholder="Content" class="input-text" autocomplete="off" data-bind="value:content, valueUpdate: \'afterkeydown\'"> </textarea>\
 						</form>\
@@ -335,7 +347,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				full: '\
 					<header class="action-bar fixed-top">\
 						<a href="#" class="app-icon action up" data-bind="click:back">\
-							<i class="chevron"></i>\
+							<i class="chevron" data-bind="css: { hide: !showback() }"></i>\
 						</a>\
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
@@ -351,7 +363,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				',
 				edit: '\
 					<header class="action-bar fixed-top">\
-						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:back" >\
+						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:saveback" >\
 							<i class="icon-accept"></i>\
 							<span class="action-title">Done</span>\
 						</a>\
@@ -360,7 +372,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						</ul>\
 					</header>\
 					<div class="content inset form-flex">\
-						<form class="inset">\
+						<form class="inset" data-bind="submit: saveback">\
 							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
 							<input type="text" name="link" placeholder="Link" class="input-text" autocomplete="off" data-bind="value:link, valueUpdate: \'afterkeydown\', css: { error: linkValidity() == \'invalid\', warning: linkValidity() == \'validkeynew\' }" />\
 						</form>\
@@ -487,7 +499,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				full: '\
 					<header class="action-bar fixed-top">\
 						<a href="#" class="app-icon action up" data-bind="click:back">\
-							<i class="chevron"></i>\
+							<i class="chevron" data-bind="css: { hide: !showback() }"></i>\
 						</a>\
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
@@ -505,7 +517,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				',
 				edit: '\
 					<header class="action-bar fixed-top">\
-						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:back" >\
+						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:saveback" >\
 							<i class="icon-accept"></i>\
 							<span class="action-title">Done</span>\
 						</a>\
@@ -514,7 +526,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						</ul>\
 					</header>\
 					<div class="content inset form-flex">\
-						<form class="inset">\
+						<form class="inset" data-bind="submit: saveback">\
 							<label class="list-divider">Folder Name</label>\
 							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
 							<ul class="list" data-bind="foreach: keysObservable">\
@@ -601,7 +613,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				full: '\
 					<header class="action-bar fixed-top">\
 						<a href="#" class="app-icon action up" data-bind="click:back">\
-							<i class="chevron"></i>\
+							<i class="chevron" data-bind="css: { hide: !showback() }"></i>\
 						</a>\
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
@@ -625,7 +637,7 @@ atom = {	// Module with all the atom related functions and definitions.
 				',
 				edit: '\
 					<header class="action-bar fixed-top">\
-						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:back" >\
+						<a href="index.html" class="action page-action" data-ignore="true" data-bind="click:saveback" >\
 							<i class="icon-accept"></i>\
 							<span class="action-title">Done</span>\
 						</a>\
@@ -634,7 +646,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						</ul>\
 					</header>\
 					<div class="content inset form-flex">\
-						<form class="inset">\
+						<form class="inset" data-bind="submit: saveback">\
 							<label class="list-divider">Folder Name</label>\
 							<input type="text" name="title" placeholder="Title" class="input-text" autocomplete="off" data-bind="value:title, valueUpdate: \'afterkeydown\'" />\
 							<ul class="list" data-bind="foreach: keysObservable">\

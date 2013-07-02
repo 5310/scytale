@@ -7,6 +7,10 @@ auth = {	// Module with all the authentication and encryption routines and state
 	salt: "maria",	// String to salt passkey hashes with.
 	
 	
+	init: function() {
+		this.createLogScreen();
+	},
+	
 	hash: function(
 		value, 	// A string (or string-assumed) value to hash.
 		salt	// A salt to hash it with.
@@ -42,6 +46,42 @@ auth = {	// Module with all the authentication and encryption routines and state
 		var passkey = passkey === undefined ? auth.hash(auth.active_passkey, "enc") : auth.hash(passkey, "enc");
 		var decrypted = CryptoJS.AES.decrypt(message, passkey).toString(CryptoJS.enc.Utf8);
 		return decrypted;
+	},
+	
+	createLogScreen: function(parent) {
+		
+		var parent = parent ? parent : $('body');
+		
+		var viewmodel = {
+			passkey: ko.observable(""),
+			login: function() {
+				auth.login(this.passkey());
+			}
+		};
+		
+		var view = '\
+			<div class="page logscreen">\
+			  <div class="content">\
+				  <div class="content container">\
+					<form class="inset" data-bind="submit: login">\
+					  <input type="password" name="password" placeholder="Passkey" class="input-text centered large" data-bind="value: passkey, valueUpdate: \'afterkeydown\'">\
+					  <div class="form-actions">\
+						<input type="submit" class="btn btn-block submit" value="Enter">\
+					  </div>\
+					</form>\
+				  </div>\
+			  </div>\
+			</div>\
+		';
+		
+		var viewId = "logscreen"+Math.floor(1000+Math.random()*9000);
+		view = "<div id='"+viewId+"' >"+view+"</div>";
+		parent.append($(view));
+		$('#'+viewId).find('textarea').autoResizer();
+		ko.applyBindings( viewmodel, $("#"+viewId)[0] );
+		
+		return viewId;
+		
 	},
 	
 	login: function(
