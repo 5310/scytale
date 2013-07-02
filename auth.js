@@ -44,7 +44,6 @@ auth = {	// Module with all the authentication and encryption routines and state
 		return decrypted;
 	},
 	
-	
 	login: function(
 		passkey		// Passkey as string.
 	) {
@@ -74,6 +73,8 @@ auth = {	// Module with all the authentication and encryption routines and state
 		
 	},
 	
-	logout: function() {},   		//TODO:
+	logout: function() {
+		document.location = "index.html";
+	},
 	
 };
