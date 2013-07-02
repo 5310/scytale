@@ -184,7 +184,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						<h1 class="title" data-bind="text:key" ></h1>\
 						<ul class="actions pull-right">\
 							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-bind="click:copy" data-transition="push"><i class="icon-copy"></i></a></li> -->\
-							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-storage"></i></a></li>\
 							<li><a href="#" class="action" title="Remove Passkey" data-transition="push" data-bind="click: logout"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
@@ -254,7 +254,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
 							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
-							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-storage"></i></a></li>\
 							<li><a href="#" class="action" title="Remove Passkey" data-transition="push" data-bind="click: logout"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
@@ -270,7 +270,7 @@ atom = {	// Module with all the atom related functions and definitions.
 							<span class="action-title">Done</span>\
 						</a>\
 						<ul class="actions pull-right">\
-							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-remove"></i></a></li>\
+							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-trash"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset form-flex">\
@@ -353,7 +353,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
 							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
-							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-storage"></i></a></li>\
 							<li><a href="#" class="action" title="Remove Passkey" data-transition="push" data-bind="click: logout"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
@@ -368,7 +368,7 @@ atom = {	// Module with all the atom related functions and definitions.
 							<span class="action-title">Done</span>\
 						</a>\
 						<ul class="actions pull-right">\
-							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-remove"></i></a></li>\
+							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-trash"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset form-flex">\
@@ -505,7 +505,7 @@ atom = {	// Module with all the atom related functions and definitions.
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
 							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
-							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-folder"></i></a></li>\
+							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-storage"></i></a></li>\
 							<li><a href="#" class="action" title="Remove Passkey" data-transition="push" data-bind="click: logout"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
@@ -522,7 +522,7 @@ atom = {	// Module with all the atom related functions and definitions.
 							<span class="action-title">Done</span>\
 						</a>\
 						<ul class="actions pull-right">\
-							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-remove"></i></a></li>\
+							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-trash"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset form-flex">\
@@ -619,7 +619,6 @@ atom = {	// Module with all the atom related functions and definitions.
 						<ul class="actions pull-right">\
 							<li><a href="#" class="action" title="Edit" data-transition="push" data-bind="click:edit" ><i class="icon-edit"></i></a></li>\
 							<!-- <li><a href="#" class="action" title="Copy Atom Key" data-transition="push"><i class="icon-copy"></i></a></li> -->\
-							<li><a href="#" class="action" title="Return to Root" data-transition="push" data-bind="click: root"><i class="icon-folder"></i></a></li>\
 							<li><a href="#" class="action" title="Remove Passkey" data-transition="push" data-bind="click: logout"><i class="icon-key"></i></a></li>\
 						</ul>\
 					</header>\
@@ -642,7 +641,7 @@ atom = {	// Module with all the atom related functions and definitions.
 							<span class="action-title">Done</span>\
 						</a>\
 						<ul class="actions pull-right">\
-							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-remove"></i></a></li>\
+							<li><a href="#" class="action" title="Delete" data-transition="push" data-bind="click:remove" ><i class="icon-trash"></i></a></li>\
 						</ul>\
 					</header>\
 					<div class="content inset form-flex">\
