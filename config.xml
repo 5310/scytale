@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
     <widget xmlns = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
-        id        = "io.github.5310">
+        id        = "io.github.5310"
+        version	  = "1.0.0" >
 
     <name>Scytale</name>
 
@@ -13,6 +14,7 @@
         Sayantan Chaudhuri
     </author>
     
+    <preference name="phonegap-version" value="2.9.0" />
     <preference name="orientation" value="portrait" />
     <preference name="android-installLocation" value="preferExternal" />
     
