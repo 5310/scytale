@@ -34,7 +34,7 @@ input[type="password"].input-text {
 }
 
 .input-text:focus {
-  border-bottom: 1px solid #037ea7;
+  border-bottom: 1px solid #ff8a00;
 }
 
 legend,

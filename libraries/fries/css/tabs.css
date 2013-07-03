@@ -56,11 +56,11 @@ ul.tab-inner li:last-child a {
 }
 
 .tab-fixed ul.tab-inner li:active {
-  background-color: rgba(51, 181, 229, 0.6);
+  background-color: rgba(255, 187, 51, 0.6);
 }
 
 .tab-fixed ul.tab-inner li.active a {
-  border-bottom: 5px solid #33b5e5;
+  border-bottom: 5px solid #ffbb33;
 }
 
 .tab-fixed ul.tab-inner li a {
@@ -71,7 +71,7 @@ ul.tab-inner li:last-child a {
   line-height: 52px;
 }
 
-/** 
+/**
  * Note: There seems to be a bug where a strange gap appears
  * between the tabs. This could only be visible on the desktop
  * version, but it's still annoying when testing. And it appears

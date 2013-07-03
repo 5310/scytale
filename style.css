@@ -2,6 +2,7 @@ ul, ol {
     list-style-type: none;
 }
 
+
 .preformatted {
     white-space: pre;
 }
@@ -14,18 +15,33 @@ ul, ol {
     font-size: 2em;
 }
 
+
 .error, .error * {
-    color: #f44 !important; 
+    color: #ff4444 !important; 
 }
 input.error {
-    border-color: #f44 !important;
+    border-color: #ff4444 !important;
 }
 .warning, .warning * {
-    color: #fe6 !important; 
+    color: #aa66cc !important; 
 }
 input.warning {
-    border-color: #fe6 !important;
+    border-color: #aa66cc !important;
 }
+
+.action-bar {
+    background-color: #e26700 !important;
+}
+.action-bar .action [class*="icon-"] {
+    color: #EEE !important;
+}
+.action-bar .action .action-title {
+    color: #EEE !important;
+}
+.action-bar .chevron:before, .action-bar .chevron:after {
+    background-color: #EEE !important;
+}
+
 
 .hide {
     display: none;
@@ -64,7 +80,7 @@ input.warning {
 }
 
 .card:active {
-    background-color: rgba(51, 181, 229, 0.5);
+    background-color: rgba(255, 187, 51, 0.5);
 }
 .card .key {
     font-size: 12px;
@@ -107,9 +123,9 @@ input.warning {
 .modal_header{
     width: 100%;
     padding: 16px;
-    border-bottom: 2px solid #33B5E5;
+    border-bottom: 2px solid #FFBB33;
     box-sizing: border-box;
-    color: #33B5E5;
+    color: #ffbb33;
     font-size: 1.2em;
 }
 .modal_content {
@@ -142,5 +158,5 @@ input.warning {
     border-right: 1px solid #333;
 }
 .modal_button:active {
-    background-color: rgba(51, 181, 229, 0.5);
+    background-color: rgba(255, 187, 51, 0.5);
 }
