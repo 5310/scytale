@@ -17,6 +17,10 @@ trans = {
 			
 		});
 		
+		document.addEventListener('deviceready', function() {
+			document.addEventListener("backbutton", trans.back, false);
+		}, false);
+		
 	},
 	
 	back: function() {
