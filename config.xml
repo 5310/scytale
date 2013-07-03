@@ -1,23 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns		= "http://www.w3.org/ns/widgets"
-	xmlns:gap	= "http://phonegap.com/ns/1.0"
-	id		= "io.github.5310"
-	version 	= "1.0.0">
+<?xml version="1.0" encoding="UTF-8" ?>
+    <widget xmlns = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "io.github.5310">
 
-	<name>Scytale</name>
+    <name>Scytale</name>
 
-	<description>
-		A simple passkey protected note taking application.
-	</description>
+    <description>
+        A simple passkey protected note taker built with localstorage, Knockout.js, Fries, and Cordova/Phonegap. 
+    </description>
 
-	<author href="build.phonegap.com"
-		email="">
-		Sayantan Chaudhuri
-	</author>
+    <author href="http://5310.github.io" email="support@phonegap.com">
+        Sayantan Chaudhuri
+    </author>
+    
+    <preference name="orientation" value="portrait" />
+    <preference name="android-installLocation" value="preferExternal" />
+    
+    <icon src="icon.png" />
 
-	<icon src="icon.png" gap:role="default" />
-
-	<plugin name="Storage" value="org.apache.cordova.Storage" />
-
-	<preference name="orientation" value="portrait" />
 </widget>
