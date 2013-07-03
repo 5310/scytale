@@ -80,7 +80,7 @@ input.warning {
 }
 
 .card:active {
-    background-color: rgba(255, 187, 51, 0.5);
+    background-color: #e26700;
 }
 .card .key {
     font-size: 12px;
