@@ -19,5 +19,7 @@
     <preference name="android-installLocation" value="preferExternal" />
     
     <icon src="icon.png" />
+    
+    <preference name="permissions" value="none"/>
 
 </widget>

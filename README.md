@@ -8,4 +8,6 @@ You can download the app at [Phonegap Build](https://build.phonegap.com/apps/459
 That is, if it worked! 
 ----------------------
 
-Dunno why but the apk fails to parse. Working on it, but being a learning exercise that's probably as far as I'd go.
+While the app works properly on a desktop browser (well, Chrom/e/ium) it doesn't work properly after packaged. Not even Fries, or my stylesheet loads properly, and the modal dialog doesn't show at all, and the back button isn't overridden. The app also clearly needs a splash to hide the ugly webview header. 
+
+I'll have to debug it, perhaps starting by packaging the Fries Cordova project to see if it works and how. But that'll have to wait.
