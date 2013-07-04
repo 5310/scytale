@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
     <widget xmlns = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
-        version	  = "1.0.0" >
+        id        = "in.co.baro.scytale"
+        version	  = "1.0.1" >
 
     <name>Scytale</name>
 
     <description>
-        A simple passkey protected note taker built with localstorage, Knockout.js, Fries, and Cordova/Phonegap. 
+        A simple passkey protected reference-linked note taker built using localstorage, Knockout.js, Fries, and Cordova/Phonegap. 
     </description>
 
     <author href="http://5310.github.io" email="support@phonegap.com">
