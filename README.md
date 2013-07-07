@@ -11,3 +11,5 @@ That is, if it worked!
 While the app works properly on a desktop browser (well, Chrom/e/ium) it doesn't work properly after packaged. Not even Fries, or my stylesheet loads properly, and the modal dialog doesn't show at all, and the back button isn't overridden. The app also clearly needs a splash to hide the ugly webview header. 
 
 I'll have to debug it, perhaps starting by packaging the Fries Cordova project to see if it works and how. But that'll have to wait.
+
+**It works as intended in the Ripple Emulator. Does not work in actual Android package. Fries (probably) only works in Cordova with the plugin which I can't use with Phonegap Build, and therefore the project is now "closed".**
